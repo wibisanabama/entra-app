@@ -76,7 +76,7 @@ class AttendeeTile extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.horizontal(10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: isCheckedIn
                   ? Colors.green.withValues(alpha: 0.15)

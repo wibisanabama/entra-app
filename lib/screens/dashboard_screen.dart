@@ -184,9 +184,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               // Event List or Empty State
               if (eventProvider.isLoading)
-                const Center(
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 40),
-                  child: CircularProgressIndicator(),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 )
               else if (eventProvider.errorMessage != null)
                 Center(
