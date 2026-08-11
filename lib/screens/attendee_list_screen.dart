@@ -82,6 +82,15 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
                         : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
                     ),
                     filled: true,
                     fillColor: theme.colorScheme.surfaceContainerHigh,
