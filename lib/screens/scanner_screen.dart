@@ -111,7 +111,18 @@ class _ScannerScreenState extends State<ScannerScreen> {
               autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Masukkan UUID Tiket',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -126,6 +137,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7C3AED),
                 foregroundColor: Colors.white,
+                elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -146,18 +158,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
         elevation: 0,
         title: const Text('Scan QR Tiket', style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.flash_on_rounded),
-            onPressed: () => _controller.toggleTorch(),
-            tooltip: 'Senter',
-          ),
-          IconButton(
-            icon: const Icon(Icons.cameraswitch_rounded),
-            onPressed: () => _controller.switchCamera(),
-            tooltip: 'Ganti Kamera',
-          ),
-        ],
       ),
       body: Stack(
         children: [
@@ -167,7 +167,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             onDetect: _onDetect,
           ),
 
-          // Viewfinder Overlay Frame
+          // Viewfinder Overlay Frame (Clean border, no glow/shadow/gradient)
           Center(
             child: Container(
               width: 260,
@@ -178,18 +178,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   width: 3,
                 ),
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: (const Color(0xFF7C3AED)).withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 4,
-                  ),
-                ],
               ),
             ),
           ),
 
-          // Instruction Banner (Bottom)
+          // Instruction Banner (Bottom) - Clean capsule, no outline border
           Positioned(
             bottom: 40,
             left: 24,
@@ -201,7 +194,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.white24),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
