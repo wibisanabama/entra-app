@@ -43,6 +43,8 @@ class TicketService {
       final data = jsonDecode(response.body);
       final List list = data['data'] ?? [];
       return list.map((item) => Attendee.fromJson(item)).toList();
+    } else if (response.statusCode == 401) {
+      throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
     } else {
       throw Exception('Gagal memuat daftar peserta');
     }
