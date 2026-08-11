@@ -56,7 +56,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final token = authProvider.token ?? '';
 
-    final ScanResult result = await _gateService.scanTicket(ticketCode, token);
+    final ScanResult result = await _gateService.scanTicket(
+      ticketCode,
+      token,
+      eventId: widget.eventId,
+    );
 
     if (mounted) {
       showDialog(

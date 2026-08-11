@@ -17,7 +17,7 @@ class ScanResult {
 }
 
 class GateService {
-  Future<ScanResult> scanTicket(String ticketCode, String token) async {
+  Future<ScanResult> scanTicket(String ticketCode, String token, {String? eventId}) async {
     final url = Uri.parse('${ApiConfig.gateBaseUrl}/api/v1/gate/scan');
     try {
       final response = await http.post(
@@ -26,7 +26,10 @@ class GateService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({'ticket_code': ticketCode}),
+        body: jsonEncode({
+          'ticket_code': ticketCode,
+          if (eventId != null && eventId.isNotEmpty) 'event_id': eventId,
+        }),
       );
 
       final data = jsonDecode(response.body);
