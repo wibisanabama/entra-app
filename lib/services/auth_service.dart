@@ -33,7 +33,10 @@ class AuthService {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200 && data['data'] != null) {
-      final token = data['data']['access_token'] ?? data['data']['token'];
+      final tokensObj = data['data']['tokens'];
+      final token = tokensObj != null 
+          ? tokensObj['access_token'] 
+          : (data['data']['access_token'] ?? data['data']['token']);
       final userJson = data['data']['user'];
       
       if (token != null) {
