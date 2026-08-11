@@ -27,7 +27,7 @@ class EntraApp extends StatelessWidget {
           final router = createRouter(context);
 
           return MaterialApp.router(
-            title: 'Entra Organizer',
+            title: 'Entra',
             debugShowCheckedModeBanner: false,
             themeMode: ThemeMode.dark,
             darkTheme: ThemeData(

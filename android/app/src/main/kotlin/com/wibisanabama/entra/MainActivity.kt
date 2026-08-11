@@ -1,4 +1,4 @@
-package com.entra.entra_app
+package com.wibisanabama.entra
 
 import io.flutter.embedding.android.FlutterActivity
 

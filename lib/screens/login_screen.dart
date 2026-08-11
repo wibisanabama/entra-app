@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   
                   // App Title
                   Text(
-                    'Entra Organizer',
+                    'Entra',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
