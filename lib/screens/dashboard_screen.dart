@@ -117,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               // User Greeting
               Text(
-                'Halo, ${authProvider.user?.name ?? "Organizer"} 👋',
+                'Halo, ${authProvider.user?.name ?? "Organizer"}',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -139,26 +139,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconColor: const Color(0xFF7C3AED),
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: StatCard(
-                      title: 'Tiket Terjual',
-                      value: '${stats['tickets_sold'] ?? 0}',
-                      icon: Icons.confirmation_number_rounded,
-                      iconColor: Colors.blueAccent,
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: StatCard(
+                        title: 'Tiket Terjual',
+                        value: '${stats['tickets_sold'] ?? 0}',
+                        icon: Icons.confirmation_number_rounded,
+                        iconColor: Colors.blueAccent,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: StatCard(
-                      title: 'Total Pendapatan',
-                      value: _formatCurrency(stats['total_revenue']),
-                      icon: Icons.payments_rounded,
-                      iconColor: Colors.greenAccent,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: StatCard(
+                        title: 'Total Pendapatan',
+                        value: _formatCurrency(stats['total_revenue']),
+                        icon: Icons.payments_rounded,
+                        iconColor: Colors.greenAccent,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 28),
 

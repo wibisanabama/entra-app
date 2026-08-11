@@ -73,11 +73,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF4C1D95)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: const Color(0xFF7C3AED),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -148,6 +144,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF7C3AED),
                     foregroundColor: Colors.white,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -160,7 +157,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 52,
-                child: OutlinedButton.icon(
+                child: ElevatedButton.icon(
                   onPressed: () {
                     context.push('/events/${event.id}/attendees');
                   },
@@ -169,11 +166,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     'Daftar Hadir Peserta',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
-                  style: OutlinedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.surfaceContainerHigh,
                     foregroundColor: theme.colorScheme.onSurface,
-                    side: BorderSide(
-                      color: theme.colorScheme.outlineVariant,
-                    ),
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -196,9 +192,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
