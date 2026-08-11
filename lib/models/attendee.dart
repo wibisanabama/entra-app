@@ -39,5 +39,5 @@ class Attendee {
     );
   }
 
-  bool get isCheckedIn => status.toUpperCase() == 'USED';
+  bool get isCheckedIn => status.toUpperCase() == 'USED' || status.toUpperCase() == 'CHECKED_IN';
 }
