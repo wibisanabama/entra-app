@@ -8,6 +8,7 @@ import 'screens/dashboard_screen.dart';
 import 'screens/event_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/scanner_screen.dart';
+import 'screens/withdrawals_screen.dart';
 
 GoRouter createRouter(BuildContext context) {
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -42,6 +43,10 @@ GoRouter createRouter(BuildContext context) {
         builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
+        path: '/withdrawals',
+        builder: (context, state) => const WithdrawalsScreen(),
+      ),
+      GoRoute(
         path: '/events/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
@@ -65,3 +70,4 @@ GoRouter createRouter(BuildContext context) {
     ],
   );
 }
+

@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/event_provider.dart';
+import '../providers/withdrawal_provider.dart';
 import '../widgets/event_card.dart';
 import '../widgets/stat_card.dart';
+import '../widgets/withdrawal_bottom_sheet.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -27,9 +29,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadData() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final eventProvider = Provider.of<EventProvider>(context, listen: false);
+    final withdrawalProvider = Provider.of<WithdrawalProvider>(context, listen: false);
 
     if (authProvider.token != null) {
-      await eventProvider.fetchDashboardData(authProvider.token!);
+      await Future.wait([
+        eventProvider.fetchDashboardData(authProvider.token!),
+        withdrawalProvider.fetchBalanceAndWithdrawals(authProvider.token!),
+      ]);
     }
   }
 
@@ -46,9 +52,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final theme = Theme.of(context);
     final authProvider = Provider.of<AuthProvider>(context);
     final eventProvider = Provider.of<EventProvider>(context);
+    final withdrawalProvider = Provider.of<WithdrawalProvider>(context);
 
     final stats = eventProvider.stats;
     final events = eventProvider.events;
+    final balance = withdrawalProvider.balance;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,6 +82,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.account_balance_wallet_rounded),
+            tooltip: 'Keuangan & Saldo',
+            onPressed: () => context.push('/withdrawals'),
+          ),
           IconButton(
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Logout',
@@ -130,6 +143,111 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Saldo Tersedia Card (Main Highlight)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF4C1D95), Color(0xFF1E1B4B)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'SALDO TERSEDIA',
+                          style: TextStyle(
+                            color: Color(0xFFA78BFA),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => context.push('/withdrawals'),
+                          child: const Row(
+                            children: [
+                              Text(
+                                'Kelola',
+                                style: TextStyle(color: Color(0xFFA78BFA), fontSize: 12, fontWeight: FontWeight.w600),
+                              ),
+                              Icon(Icons.chevron_right_rounded, color: Color(0xFFA78BFA), size: 16),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _formatCurrency(balance.availableBalance),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.arrow_outward_rounded, size: 16),
+                            label: const Text('Tarik Dana', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF4C1D95),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                            ),
+                            onPressed: balance.availableBalance >= 10000
+                                ? () async {
+                                    final res = await WithdrawalBottomSheet.show(
+                                      context,
+                                      balance.availableBalance,
+                                    );
+                                    if (res == true) {
+                                      _loadData();
+                                    }
+                                  }
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(color: Colors.white24),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                          ),
+                          onPressed: () => context.push('/withdrawals'),
+                          child: const Text('Riwayat', style: TextStyle(fontSize: 13)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
 
               // Stats Section
               StatCard(

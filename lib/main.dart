@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'providers/attendee_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/event_provider.dart';
+import 'providers/withdrawal_provider.dart';
 import 'router.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class EntraApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => EventProvider()),
         ChangeNotifierProvider(create: (_) => AttendeeProvider()),
+        ChangeNotifierProvider(create: (_) => WithdrawalProvider()),
       ],
       child: Builder(
         builder: (context) {

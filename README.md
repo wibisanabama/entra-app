@@ -130,6 +130,7 @@ flutter run
 | `/events/:id` | `EventDetailScreen` | Protected | Detailed event overview with navigation to scanner and attendee list. |
 | `/events/:id/scan` | `ScannerScreen` | Protected | Real-time QR camera scanner with strict event ID validation. |
 | `/events/:id/attendees` | `AttendeeListScreen` | Protected | Attendee roster with buyer name enrichment and search filter. |
+| `/withdrawals` | `WithdrawalsScreen` | Protected | Organizer revenue balance overview, bank payout requests, and withdrawal history ledger. |
 
 ---
 
@@ -140,8 +141,9 @@ flutter run
 - Persists JWT access tokens locally using `shared_preferences`.
 - Automatically redirects unauthenticated users to `/login`.
 
-### 2. Dashboard Analytics (`EventProvider`)
-- Fetches real-time organizer statistics (`Total Revenue`, `Tickets Sold`, `Total Orders`) from `ticket-service` (`:8083`).
+### 2. Dashboard Analytics (`EventProvider` & `WithdrawalProvider`)
+- Fetches real-time organizer statistics (`Total Revenue`, `Tickets Sold`, `Total Orders`) and net available balance from `ticket-service` (`:8083`).
+- Displays interactive balance summary cards with quick withdrawal triggers.
 - Displays a clean list of events owned by the authenticated organizer.
 - Handles token expiration (401 Unauthorized) gracefully with clear user prompts.
 
@@ -155,6 +157,12 @@ flutter run
 - Retrieves event attendees with buyer full name and email pre-enriched by `ticket-service`.
 - Live search filter by attendee name or ticket code.
 - Status badges indicating `TERPARKAI` (Checked-In / Used) vs `BELUM` (Active).
+
+### 5. Organizer Finance and Payout Management (`WithdrawalsScreen` & `WithdrawalProvider`)
+- Live available balance calculation (`Total Revenue` minus pending/paid deductions).
+- Modal bottom sheet form for requesting bank payouts (amount, bank choice, account number, beneficiary name, optional notes).
+- Quick percentage chips (25%, 50%, 100% full payout) and fixed amount shortcuts.
+- Status tracking (`PENDING`, `APPROVED`, `PAID`, `REJECTED`) with detailed modal receipts and rejection reasons.
 
 ---
 
