@@ -153,10 +153,12 @@ flutter run
 - Performs dual-lookup validation by Ticket ID or Ticket Code.
 - Strictly validates ticket `event_id` against current gate `event_id` to prevent cross-event fraud.
 
-### 4. Enriched Attendee List (`AttendeeListScreen` & `AttendeeProvider`)
+### 4. Enriched Attendee List & Manual 1-Tap Check-In (`AttendeeListScreen` & `AttendeeProvider`)
 - Retrieves event attendees with buyer full name and email pre-enriched by `ticket-service`.
-- Live search filter by attendee name or ticket code.
-- Status badges indicating `TERPARKAI` (Checked-In / Used) vs `BELUM` (Active).
+- Live search filter by attendee name, email, or ticket code.
+- Interactive status filter chips (`Semua`, `Hadir`, `Belum Hadir`).
+- **1-Tap Manual Check-In**: Instant check-in button directly on attendee cards with confirmation dialog, fallback handling, and real-time status update without camera scanner.
+- Attendee detail bottom sheet with single-click ticket code copying.
 
 ### 5. Organizer Finance and Payout Management (`WithdrawalsScreen` & `WithdrawalProvider`)
 - Live available balance calculation (`Total Revenue` minus pending/paid deductions).

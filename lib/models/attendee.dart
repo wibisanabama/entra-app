@@ -40,4 +40,30 @@ class Attendee {
   }
 
   bool get isCheckedIn => status.toUpperCase() == 'USED' || status.toUpperCase() == 'CHECKED_IN';
+
+  Attendee copyWith({
+    String? id,
+    String? orderId,
+    String? userId,
+    String? eventId,
+    String? ticketTypeId,
+    String? ticketCode,
+    String? status,
+    String? createdAt,
+    String? userName,
+    String? userEmail,
+  }) {
+    return Attendee(
+      id: id ?? this.id,
+      orderId: orderId ?? this.orderId,
+      userId: userId ?? this.userId,
+      eventId: eventId ?? this.eventId,
+      ticketTypeId: ticketTypeId ?? this.ticketTypeId,
+      ticketCode: ticketCode ?? this.ticketCode,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      userName: userName ?? this.userName,
+      userEmail: userEmail ?? this.userEmail,
+    );
+  }
 }

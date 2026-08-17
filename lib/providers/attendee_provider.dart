@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import '../models/attendee.dart';
+import '../services/gate_service.dart';
 import '../services/ticket_service.dart';
+
+enum AttendeeStatusFilter { all, checkedIn, unchecked }
 
 class AttendeeProvider extends ChangeNotifier {
   final TicketService _ticketService = TicketService();
+  final GateService _gateService = GateService();
 
   List<Attendee> _attendees = [];
   bool _isLoading = false;
+  bool _isProcessingAction = false;
   String? _errorMessage;
   String _searchQuery = '';
+  AttendeeStatusFilter _statusFilter = AttendeeStatusFilter.all;
 
   List<Attendee> get attendees {
-    if (_searchQuery.isEmpty) return _attendees;
-    return _attendees.where((a) {
+    var list = _attendees;
+
+    // Filter by status
+    if (_statusFilter == AttendeeStatusFilter.checkedIn) {
+      list = list.where((a) => a.isCheckedIn).toList();
+    } else if (_statusFilter == AttendeeStatusFilter.unchecked) {
+      list = list.where((a) => !a.isCheckedIn).toList();
+    }
+
+    // Filter by search query
+    if (_searchQuery.isEmpty) return list;
+    return list.where((a) {
       final name = a.userName.toLowerCase();
       final email = a.userEmail.toLowerCase();
       final code = a.ticketCode.toLowerCase();
@@ -22,11 +38,14 @@ class AttendeeProvider extends ChangeNotifier {
   }
 
   bool get isLoading => _isLoading;
+  bool get isProcessingAction => _isProcessingAction;
   String? get errorMessage => _errorMessage;
   String get searchQuery => _searchQuery;
+  AttendeeStatusFilter get statusFilter => _statusFilter;
 
   int get totalCount => _attendees.length;
   int get checkedInCount => _attendees.where((a) => a.isCheckedIn).length;
+  int get uncheckedCount => _attendees.where((a) => !a.isCheckedIn).length;
 
   Future<void> fetchAttendees(String eventId, String token) async {
     _isLoading = true;
@@ -41,6 +60,37 @@ class AttendeeProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<ScanResult> manualCheckIn(Attendee attendee, String token, {String? eventId}) async {
+    _isProcessingAction = true;
+    notifyListeners();
+
+    try {
+      final result = await _gateService.scanTicket(
+        attendee.ticketCode,
+        token,
+        eventId: eventId ?? attendee.eventId,
+      );
+
+      if (result.status == ScanStatus.success) {
+        // Mark attendee as checked in locally
+        final index = _attendees.indexWhere((a) => a.ticketCode == attendee.ticketCode || a.id == attendee.id);
+        if (index != -1) {
+          _attendees[index] = _attendees[index].copyWith(status: 'USED');
+        }
+      }
+
+      return result;
+    } finally {
+      _isProcessingAction = false;
+      notifyListeners();
+    }
+  }
+
+  void setStatusFilter(AttendeeStatusFilter filter) {
+    _statusFilter = filter;
+    notifyListeners();
   }
 
   void setSearchQuery(String query) {
