@@ -7,6 +7,7 @@ import 'screens/attendee_list_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/event_detail_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/profile_screen.dart';
 import 'screens/scanner_screen.dart';
 import 'screens/withdrawals_screen.dart';
 
@@ -41,6 +42,10 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/withdrawals',

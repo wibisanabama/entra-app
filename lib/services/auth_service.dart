@@ -74,4 +74,63 @@ class AuthService {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>> updateProfile({
+    required String fullName,
+    String? phone,
+    String? avatarUrl,
+  }) async {
+    final token = await getToken();
+    if (token == null) {
+      return {'success': false, 'message': 'Sesi telah kedaluwarsa. Silakan login kembali.'};
+    }
+
+    final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/profile');
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'full_name': fullName,
+        'phone': phone ?? '',
+        'avatar_url': avatarUrl ?? '',
+      }),
+    );
+
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200 && data['data'] != null) {
+      final user = User.fromJson(data['data']);
+      return {'success': true, 'user': user};
+    } else {
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Gagal memperbarui profil pengguna.',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/forgot-password');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return {
+        'success': true,
+        'message': data['message'] ?? 'Tautan reset password telah dikirimkan ke email Anda.',
+      };
+    } else {
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Gagal meminta reset password.',
+      };
+    }
+  }
 }
+

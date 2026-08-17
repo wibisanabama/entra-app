@@ -73,6 +73,33 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateProfile({required String fullName, String? phone, String? avatarUrl}) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final result = await _authService.updateProfile(
+      fullName: fullName,
+      phone: phone,
+      avatarUrl: avatarUrl,
+    );
+
+    _isLoading = false;
+    if (result['success'] == true) {
+      _user = result['user'];
+      notifyListeners();
+      return true;
+    } else {
+      _errorMessage = result['message'];
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> forgotPassword(String email) async {
+    return _authService.forgotPassword(email);
+  }
+
   Future<void> logout() async {
     await _authService.removeToken();
     _token = null;
@@ -81,3 +108,4 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

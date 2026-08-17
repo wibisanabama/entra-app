@@ -166,6 +166,15 @@ flutter run
 - Quick percentage chips (25%, 50%, 100% full payout) and fixed amount shortcuts.
 - Status tracking (`PENDING`, `APPROVED`, `PAID`, `REJECTED`) with detailed modal receipts and rejection reasons.
 
+### 6. Organizer Profile & Security Management (`ProfileScreen` & `AuthProvider`)
+- Hero profile card with large organizer avatar, role badge, and copyable Account UUID.
+- 3 real-time financial & operational KPI cards (*Available Balance*, *Tickets Sold*, *Active Events*).
+- Personal info edit bottom sheet for updating Full Name and Phone number via `auth-service` (`PUT /api/v1/auth/profile`).
+- Password reset flow via email verification token (`POST /api/v1/auth/forgot-password`).
+- Network & microservices gateway inspection status (:8081 Auth, :8083 Ticket, :8086 Gate).
+- Secure account sign-out with confirmation dialog.
+
+
 ---
 
 ## Building Release Binaries

@@ -88,6 +88,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onPressed: () => context.push('/withdrawals'),
           ),
           IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF7C3AED), width: 1.5),
+              ),
+              child: const Icon(Icons.person_rounded, size: 18, color: Colors.white),
+            ),
+            tooltip: 'Profil & Pengaturan',
+            onPressed: () => context.push('/profile'),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Logout',
             onPressed: () async {
