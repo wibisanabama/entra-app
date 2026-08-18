@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../models/event.dart';
 import '../providers/auth_provider.dart';
 import '../providers/event_provider.dart';
 import '../providers/withdrawal_provider.dart';
@@ -18,12 +19,22 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  String _selectedStatusFilter = 'ALL';
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -47,6 +58,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return formatter.format(val);
   }
 
+  List<EventModel> _getFilteredEvents(List<EventModel> allEvents) {
+    return allEvents.where((e) {
+      final query = _searchQuery.toLowerCase();
+      final matchesSearch = _searchQuery.isEmpty ||
+          e.title.toLowerCase().contains(query) ||
+          e.description.toLowerCase().contains(query);
+
+      final matchesStatus = _selectedStatusFilter == 'ALL' ||
+          e.status.toUpperCase() == _selectedStatusFilter.toUpperCase();
+
+      return matchesSearch && matchesStatus;
+    }).toList();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -55,7 +81,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final withdrawalProvider = Provider.of<WithdrawalProvider>(context);
 
     final stats = eventProvider.stats;
-    final events = eventProvider.events;
+    final allEvents = eventProvider.events;
+    final filteredEvents = _getFilteredEvents(allEvents);
     final balance = withdrawalProvider.balance;
 
     return Scaffold(
@@ -264,7 +291,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Stats Section
               StatCard(
                 title: 'Total Event',
-                value: '${events.length} Event',
+                value: '${allEvents.length} Event',
                 icon: Icons.event_rounded,
                 iconColor: const Color(0xFF7C3AED),
               ),
@@ -306,7 +333,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   Text(
-                    '${events.length} Ditampilkan',
+                    '${filteredEvents.length} dari ${allEvents.length} Event',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -314,6 +341,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 12),
+
+              // Search Bar
+              TextField(
+                controller: _searchController,
+                onChanged: (val) {
+                  setState(() {
+                    _searchQuery = val.trim();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Cari judul, deskripsi, atau lokasi...',
+                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Status Filter Chips
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildFilterChip('ALL', 'Semua Event', allEvents.length),
+                    const SizedBox(width: 8),
+                    _buildFilterChip('PUBLISHED', 'Published', allEvents.where((e) => e.status.toUpperCase() == 'PUBLISHED').length),
+                    const SizedBox(width: 8),
+                    _buildFilterChip('DRAFT', 'Draft', allEvents.where((e) => e.status.toUpperCase() == 'DRAFT').length),
+                    const SizedBox(width: 8),
+                    _buildFilterChip('COMPLETED', 'Selesai', allEvents.where((e) => e.status.toUpperCase() == 'COMPLETED').length),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
 
               // Event List or Empty State
               if (eventProvider.isLoading)
@@ -341,7 +426,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                 )
-              else if (events.isEmpty)
+              else if (allEvents.isEmpty)
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 40),
@@ -370,13 +455,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                 )
+              else if (filteredEvents.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 36),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.filter_alt_off_rounded,
+                          size: 48,
+                          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Tidak Ada Event yang Cocok',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Coba ubah kata kunci pencarian atau ganti filter status',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _searchQuery = '';
+                              _selectedStatusFilter = 'ALL';
+                            });
+                          },
+                          icon: const Icon(Icons.refresh_rounded, size: 16),
+                          label: const Text('Reset Filter'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               else
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: events.length,
+                  itemCount: filteredEvents.length,
                   itemBuilder: (context, index) {
-                    final event = events[index];
+                    final event = filteredEvents[index];
                     return EventCard(
                       event: event,
                       onTap: () {
@@ -389,6 +515,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFilterChip(String filterKey, String label, int count) {
+    final isSelected = _selectedStatusFilter == filterKey;
+    return ChoiceChip(
+      label: Text('$label ($count)'),
+      selected: isSelected,
+      onSelected: (selected) {
+        if (selected) {
+          setState(() {
+            _selectedStatusFilter = filterKey;
+          });
+        }
+      },
+      selectedColor: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+      labelStyle: TextStyle(
+        color: isSelected ? const Color(0xFFC4B5FD) : Colors.white70,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 12,
+      ),
+      side: BorderSide(
+        color: isSelected ? const Color(0xFF7C3AED) : Colors.white12,
+        width: 1,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      showCheckmark: false,
     );
   }
 }
