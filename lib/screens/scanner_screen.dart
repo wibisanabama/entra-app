@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
+import '../models/gate_stats.dart';
 import '../providers/auth_provider.dart';
 import '../services/gate_service.dart';
 import '../widgets/scan_result_dialog.dart';
@@ -27,11 +28,46 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   final GateService _gateService = GateService();
   bool _isProcessing = false;
+  bool _torchEnabled = false;
+  GateStats? _gateStats;
+  bool _statsLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGateStats();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadGateStats() async {
+    if (!mounted) return;
+    setState(() {
+      _statsLoading = true;
+    });
+
+    final stats = await _gateService.getGateStats(widget.eventId);
+    if (mounted) {
+      setState(() {
+        _gateStats = stats;
+        _statsLoading = false;
+      });
+    }
+  }
+
+  void _toggleTorch() async {
+    await _controller.toggleTorch();
+    setState(() {
+      _torchEnabled = !_torchEnabled;
+    });
+  }
+
+  void _switchCamera() async {
+    await _controller.switchCamera();
   }
 
   void _onDetect(BarcodeCapture capture) async {
@@ -73,6 +109,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
               _isProcessing = false;
             });
             _controller.start();
+            if (result.status == ScanStatus.success) {
+              _loadGateStats();
+            }
           },
         ),
       );
@@ -155,13 +194,38 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final stats = _gateStats;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Scan QR Tiket', style: TextStyle(color: Colors.white)),
+        title: const Text('Scan QR Tiket', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            onPressed: _toggleTorch,
+            icon: Icon(
+              _torchEnabled ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+              color: _torchEnabled ? Colors.amberAccent : Colors.white,
+            ),
+            tooltip: 'Senter Kamera',
+          ),
+          IconButton(
+            onPressed: _switchCamera,
+            icon: const Icon(Icons.flip_camera_ios_rounded, color: Colors.white),
+            tooltip: 'Ganti Kamera',
+          ),
+          IconButton(
+            onPressed: _loadGateStats,
+            icon: Icon(
+              Icons.refresh_rounded,
+              color: _statsLoading ? Colors.amberAccent : Colors.white70,
+            ),
+            tooltip: 'Segarkan Statistik',
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -171,7 +235,126 @@ class _ScannerScreenState extends State<ScannerScreen> {
             onDetect: _onDetect,
           ),
 
-          // Viewfinder Overlay Frame (Clean border, no glow/shadow/gradient)
+          // Live Gate Attendance Overlay Banner (Top)
+          Positioned(
+            top: 16,
+            left: 20,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF111827).withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.4),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF10B981),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'LIVE GATE IN',
+                            style: TextStyle(
+                              color: Color(0xFF7C3AED),
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (stats != null)
+                        Text(
+                          '${stats.checkinRate.toStringAsFixed(1)}% Hadir',
+                          style: const TextStyle(
+                            color: Color(0xFF10B981),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else
+                        const Text(
+                          'Memuat...',
+                          style: TextStyle(color: Colors.grey, fontSize: 11),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            stats != null ? '${stats.checkedIn} / ${stats.totalTickets}' : '- / -',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'monospace',
+                            ),
+                          ),
+                          const Text(
+                            'Total Sudah Check-In',
+                            style: TextStyle(color: Colors.white60, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            stats != null ? '${stats.remaining}' : '-',
+                            style: const TextStyle(
+                              color: Color(0xFFF59E0B),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'monospace',
+                            ),
+                          ),
+                          const Text(
+                            'Sisa Belum Masuk',
+                            style: TextStyle(color: Colors.white60, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if (stats != null && stats.totalTickets > 0) ...[
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: (stats.checkedIn / stats.totalTickets).clamp(0.0, 1.0),
+                        backgroundColor: Colors.white12,
+                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF7C3AED)),
+                        minHeight: 5,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+
+          // Viewfinder Overlay Frame
           Center(
             child: Container(
               width: 260,
@@ -186,7 +369,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             ),
           ),
 
-          // Instruction Banner (Bottom) - Clean capsule, no outline border
+          // Instruction Banner (Bottom)
           Positioned(
             bottom: 40,
             left: 24,
@@ -196,7 +379,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.7),
+                    color: Colors.black.withValues(alpha: 0.75),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Row(
