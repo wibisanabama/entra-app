@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
@@ -97,6 +98,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
       token,
       eventId: widget.eventId,
     );
+
+    if (result.status == ScanStatus.success) {
+      HapticFeedback.heavyImpact();
+    } else {
+      HapticFeedback.vibrate();
+    }
 
     if (mounted) {
       showDialog(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../models/attendee.dart';
@@ -164,6 +165,39 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
     }
   }
 
+  void _exportManifestSummary(AttendeeProvider attendeeProvider) {
+    HapticFeedback.mediumImpact();
+    final total = attendeeProvider.totalCount;
+    final checkedIn = attendeeProvider.checkedInCount;
+    final unchecked = attendeeProvider.uncheckedCount;
+    final rate = total > 0 ? (checkedIn / total * 100).toStringAsFixed(1) : '0.0';
+
+    final buffer = StringBuffer();
+    buffer.writeln('=== MANIFEST KEHADIRAN EVENT ENTRA ===');
+    buffer.writeln('Event ID: ${widget.eventId}');
+    buffer.writeln('Total Peserta Terdaftar: $total');
+    buffer.writeln('Sudah Masuk Gate: $checkedIn ($rate%)');
+    buffer.writeln('Belum Masuk: $unchecked');
+    buffer.writeln('Waktu Laporan: ${DateTime.now().toLocal()}');
+    buffer.writeln('======================================');
+
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Color(0xFF7C3AED),
+        content: Row(
+          children: [
+            Icon(Icons.copy_all_rounded, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Ringkasan manifest berhasil disalin ke clipboard!'),
+          ],
+        ),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -179,6 +213,11 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
       appBar: AppBar(
         title: const Text('Daftar Hadir Peserta'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.share_rounded),
+            tooltip: 'Salin Ringkasan Manifest',
+            onPressed: () => _exportManifestSummary(attendeeProvider),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             tooltip: 'Refresh Peserta',
