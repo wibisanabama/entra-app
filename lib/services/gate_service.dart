@@ -9,11 +9,15 @@ class ScanResult {
   final ScanStatus status;
   final String message;
   final String ticketCode;
+  final String? attendeeName;
+  final String? ticketTypeName;
 
   ScanResult({
     required this.status,
     required this.message,
     required this.ticketCode,
+    this.attendeeName,
+    this.ticketTypeName,
   });
 }
 
@@ -34,24 +38,33 @@ class GateService {
       );
 
       final data = jsonDecode(response.body);
+      final payload = data['data'] is Map<String, dynamic> ? data['data'] as Map<String, dynamic> : null;
+      final attendeeName = payload?['user_name'] ?? payload?['name'] ?? payload?['attendee_name'];
+      final ticketTypeName = payload?['ticket_type_name'] ?? payload?['tier_name'];
 
       if (response.statusCode == 200) {
         return ScanResult(
           status: ScanStatus.success,
           message: data['message'] ?? 'Tiket valid! Check-in berhasil.',
           ticketCode: ticketCode,
+          attendeeName: attendeeName,
+          ticketTypeName: ticketTypeName,
         );
       } else if (response.statusCode == 409) {
         return ScanResult(
           status: ScanStatus.alreadyUsed,
           message: data['message'] ?? 'Tiket sudah pernah digunakan atau tidak valid.',
           ticketCode: ticketCode,
+          attendeeName: attendeeName,
+          ticketTypeName: ticketTypeName,
         );
       } else {
         return ScanResult(
           status: ScanStatus.invalid,
           message: data['message'] ?? 'Tiket tidak valid atau tidak ditemukan.',
           ticketCode: ticketCode,
+          attendeeName: attendeeName,
+          ticketTypeName: ticketTypeName,
         );
       }
     } catch (e) {
