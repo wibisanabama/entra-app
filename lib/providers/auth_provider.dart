@@ -18,7 +18,7 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   AuthProvider() {
-    initAuth();
+    Future.microtask(() => initAuth());
   }
 
   Future<void> initAuth() async {
