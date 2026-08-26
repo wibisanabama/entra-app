@@ -23,56 +23,67 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/login');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
+    try {
+      final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
 
-    final data = jsonDecode(response.body);
+      final data = jsonDecode(response.body);
 
-    if (response.statusCode == 200 && data['data'] != null) {
-      final tokensObj = data['data']['tokens'];
-      final token = tokensObj != null 
-          ? tokensObj['access_token'] 
-          : (data['data']['access_token'] ?? data['data']['token']);
-      final userJson = data['data']['user'];
-      
-      if (token != null) {
-        await saveToken(token);
+      if (response.statusCode == 200 && data['data'] != null) {
+        final tokensObj = data['data']['tokens'];
+        final token = tokensObj != null 
+            ? tokensObj['access_token'] 
+            : (data['data']['access_token'] ?? data['data']['token']);
+        final userJson = data['data']['user'];
+        
+        if (token != null) {
+          await saveToken(token);
+        }
+
+        final user = User.fromJson(userJson ?? {});
+        return {'success': true, 'token': token, 'user': user};
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Login gagal. Periksa email & password.'
+        };
       }
-
-      final user = User.fromJson(userJson ?? {});
-      return {'success': true, 'token': token, 'user': user};
-    } else {
+    } catch (e) {
       return {
         'success': false,
-        'message': data['message'] ?? 'Login gagal. Periksa email & password.'
+        'message': 'Gagal terhubung ke server. Periksa koneksi internet Anda.'
       };
     }
   }
 
   Future<User?> getProfile() async {
-    final token = await getToken();
-    if (token == null) return null;
+    try {
+      final token = await getToken();
+      if (token == null) return null;
 
-    final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/profile');
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+      final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/profile');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['data'] != null) {
-        return User.fromJson(data['data']);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['data'] != null) {
+          return User.fromJson(data['data']);
+        }
       }
+      return null;
+    } catch (_) {
+      return null;
     }
-    return null;
   }
 
   Future<Map<String, dynamic>> updateProfile({
@@ -80,55 +91,69 @@ class AuthService {
     String? phone,
     String? avatarUrl,
   }) async {
-    final token = await getToken();
-    if (token == null) {
-      return {'success': false, 'message': 'Sesi telah kedaluwarsa. Silakan login kembali.'};
-    }
+    try {
+      final token = await getToken();
+      if (token == null) {
+        return {'success': false, 'message': 'Sesi telah kedaluwarsa. Silakan login kembali.'};
+      }
 
-    final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/profile');
-    final response = await http.put(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({
-        'full_name': fullName,
-        'phone': phone ?? '',
-        'avatar_url': avatarUrl ?? '',
-      }),
-    );
+      final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/profile');
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'full_name': fullName,
+          'phone': phone ?? '',
+          'avatar_url': avatarUrl ?? '',
+        }),
+      );
 
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data['data'] != null) {
-      final user = User.fromJson(data['data']);
-      return {'success': true, 'user': user};
-    } else {
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['data'] != null) {
+        final user = User.fromJson(data['data']);
+        return {'success': true, 'user': user};
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Gagal memperbarui profil pengguna.',
+        };
+      }
+    } catch (e) {
       return {
         'success': false,
-        'message': data['message'] ?? 'Gagal memperbarui profil pengguna.',
+        'message': 'Gagal terhubung ke server. Periksa koneksi internet Anda.'
       };
     }
   }
 
   Future<Map<String, dynamic>> forgotPassword(String email) async {
-    final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/forgot-password');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
-    );
+    try {
+      final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/forgot-password');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
 
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      return {
-        'success': true,
-        'message': data['message'] ?? 'Tautan reset password telah dikirimkan ke email Anda.',
-      };
-    } else {
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Tautan reset password telah dikirimkan ke email Anda.',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Gagal meminta reset password.',
+        };
+      }
+    } catch (e) {
       return {
         'success': false,
-        'message': data['message'] ?? 'Gagal meminta reset password.',
+        'message': 'Gagal terhubung ke server. Periksa koneksi internet Anda.'
       };
     }
   }
