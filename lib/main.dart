@@ -12,59 +12,84 @@ void main() {
   runApp(const EntraApp());
 }
 
-class EntraApp extends StatelessWidget {
+class EntraApp extends StatefulWidget {
   const EntraApp({super.key});
+
+  @override
+  State<EntraApp> createState() => _EntraAppState();
+}
+
+class _EntraAppState extends State<EntraApp> {
+  late final AuthProvider _authProvider;
+  late final EventProvider _eventProvider;
+  late final AttendeeProvider _attendeeProvider;
+  late final WithdrawalProvider _withdrawalProvider;
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _authProvider = AuthProvider();
+    _eventProvider = EventProvider();
+    _attendeeProvider = AttendeeProvider();
+    _withdrawalProvider = WithdrawalProvider();
+    _router = createRouterWithAuth(_authProvider);
+  }
+
+  @override
+  void dispose() {
+    _router.dispose();
+    _authProvider.dispose();
+    _eventProvider.dispose();
+    _attendeeProvider.dispose();
+    _withdrawalProvider.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => EventProvider()),
-        ChangeNotifierProvider(create: (_) => AttendeeProvider()),
-        ChangeNotifierProvider(create: (_) => WithdrawalProvider()),
+        ChangeNotifierProvider.value(value: _authProvider),
+        ChangeNotifierProvider.value(value: _eventProvider),
+        ChangeNotifierProvider.value(value: _attendeeProvider),
+        ChangeNotifierProvider.value(value: _withdrawalProvider),
       ],
-      child: Builder(
-        builder: (context) {
-          final router = createRouter(context);
-
-          return MaterialApp.router(
-            title: 'Entra',
-            debugShowCheckedModeBanner: false,
-            themeMode: ThemeMode.dark,
-            darkTheme: ThemeData(
-              useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF7C3AED),
-                brightness: Brightness.dark,
-              ),
-              scaffoldBackgroundColor: const Color(0xFF030712), // gray-950 like entra-web
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Color(0xFF030712),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                scrolledUnderElevation: 0,
-              ),
-              inputDecorationTheme: InputDecorationTheme(
-                filled: true,
-                fillColor: const Color(0xFF111827), // gray-900
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF374151)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF374151)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
-                ),
-              ),
+      child: MaterialApp.router(
+        title: 'Entra',
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.dark,
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF7C3AED),
+            brightness: Brightness.dark,
+          ),
+          scaffoldBackgroundColor: const Color(0xFF030712), // gray-950 like entra-web
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF030712),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: const Color(0xFF111827), // gray-900
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF374151)),
             ),
-            routerConfig: router,
-          );
-        },
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF374151)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
+            ),
+          ),
+        ),
+        routerConfig: _router,
       ),
     );
   }

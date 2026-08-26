@@ -13,7 +13,10 @@ import 'screens/withdrawals_screen.dart';
 
 GoRouter createRouter(BuildContext context) {
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  return createRouterWithAuth(authProvider);
+}
 
+GoRouter createRouterWithAuth(AuthProvider authProvider) {
   return GoRouter(
     initialLocation: '/dashboard',
     refreshListenable: authProvider,
