@@ -47,22 +47,19 @@ class EventService {
 
   Future<List<TicketTier>> getEventTicketTiers(String eventId, String token) async {
     final url = Uri.parse('${ApiConfig.eventBaseUrl}/api/v1/events/$eventId/tickets');
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final List list = data['data'] is List ? data['data'] : (data is List ? data : []);
-        return list.map((item) => TicketTier.fromJson(item as Map<String, dynamic>)).toList();
-      }
-      return [];
-    } catch (e) {
-      return [];
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List list = data['data'] is List ? data['data'] : (data is List ? data : []);
+      return list.map((item) => TicketTier.fromJson(item as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Gagal memuat kategori tiket (HTTP ${response.statusCode})');
     }
   }
 }

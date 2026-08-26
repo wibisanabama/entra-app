@@ -72,4 +72,13 @@ class WithdrawalProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void clearData() {
+    _balance = OrganizerBalance.empty();
+    _withdrawals = [];
+    _isLoading = false;
+    _isSubmitting = false;
+    _errorMessage = null;
+    notifyListeners();
+  }
 }

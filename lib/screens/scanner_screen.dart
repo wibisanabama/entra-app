@@ -103,6 +103,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   void _toggleTorch() async {
     await _controller.toggleTorch();
+    if (!mounted) return;
     setState(() {
       _torchEnabled = !_torchEnabled;
     });

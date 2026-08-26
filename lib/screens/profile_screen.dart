@@ -687,6 +687,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
 
                     if (confirm == true && context.mounted) {
+                      Provider.of<EventProvider>(context, listen: false).clearData();
+                      Provider.of<WithdrawalProvider>(context, listen: false).clearData();
                       await authProvider.logout();
                       if (context.mounted) {
                         context.go('/login');

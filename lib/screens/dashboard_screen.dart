@@ -543,7 +543,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      showCheckmark: false,
+      showCheckmark: true,
+      checkmarkColor: const Color(0xFFC4B5FD),
     );
   }
 }

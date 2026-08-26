@@ -48,6 +48,7 @@ class AttendeeProvider extends ChangeNotifier {
   int get uncheckedCount => _attendees.where((a) => !a.isCheckedIn).length;
 
   Future<void> fetchAttendees(String eventId, String token) async {
+    _attendees = [];
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -73,7 +74,7 @@ class AttendeeProvider extends ChangeNotifier {
         eventId: eventId ?? attendee.eventId,
       );
 
-      if (result.status == ScanStatus.success) {
+      if (result.status == ScanStatus.success || result.status == ScanStatus.alreadyUsed) {
         // Mark attendee as checked in locally
         final index = _attendees.indexWhere((a) => a.ticketCode == attendee.ticketCode || a.id == attendee.id);
         if (index != -1) {
@@ -95,6 +96,16 @@ class AttendeeProvider extends ChangeNotifier {
 
   void setSearchQuery(String query) {
     _searchQuery = query;
+    notifyListeners();
+  }
+
+  void clearData() {
+    _attendees = [];
+    _isLoading = false;
+    _isProcessingAction = false;
+    _errorMessage = null;
+    _searchQuery = '';
+    _statusFilter = AttendeeStatusFilter.all;
     notifyListeners();
   }
 }

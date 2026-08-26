@@ -49,4 +49,16 @@ class EventProvider extends ChangeNotifier {
       return null;
     }
   }
+
+  void clearData() {
+    _events = [];
+    _stats = {
+      'total_orders': 0,
+      'total_revenue': 0,
+      'tickets_sold': 0,
+    };
+    _isLoading = false;
+    _errorMessage = null;
+    notifyListeners();
+  }
 }

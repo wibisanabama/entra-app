@@ -544,7 +544,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
         backgroundColor: const Color(0xFF111827),
         selectedColor: const Color(0xFF7C3AED),
         checkmarkColor: Colors.white,
-        showCheckmark: false,
+        showCheckmark: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
