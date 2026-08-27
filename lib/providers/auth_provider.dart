@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
+  StreamSubscription<void>? _sessionExpiredSubscription;
+  bool _disposed = false;
 
   User? _user;
   String? _token;
@@ -18,7 +21,31 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   AuthProvider() {
+    _sessionExpiredSubscription = AuthService.onSessionExpired.listen((_) {
+      handleSessionExpired();
+    });
     Future.microtask(() => initAuth());
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _sessionExpiredSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
+
+  void handleSessionExpired() {
+    _token = null;
+    _user = null;
+    _errorMessage = 'Sesi telah berakhir. Silakan login kembali.';
+    notifyListeners();
   }
 
   Future<void> initAuth() async {
@@ -41,6 +68,18 @@ class AuthProvider extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<bool> refreshToken() async {
+    final result = await _authService.refreshToken();
+    if (result['success'] == true && result['token'] != null) {
+      _token = result['token'] as String;
+      notifyListeners();
+      return true;
+    } else {
+      await logout();
+      return false;
+    }
   }
 
   Future<bool> login(String email, String password) async {
@@ -108,4 +147,5 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
 
