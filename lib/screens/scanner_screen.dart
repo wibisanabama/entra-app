@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../models/gate_stats.dart';
 import '../providers/auth_provider.dart';
 import '../services/gate_service.dart';
+import '../utils/qr_normalizer.dart';
 import '../widgets/scan_result_dialog.dart';
 
 class RecentScanItem {
@@ -52,7 +53,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
   bool _isProcessing = false;
   bool _torchEnabled = false;
   GateStats? _gateStats;
-  bool _statsLoading = false;
 
   // Gate & Lane Selection
   String _selectedGate = 'Gate Utama';
@@ -100,15 +100,10 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
   Future<void> _loadGateStats() async {
     if (!mounted) return;
-    setState(() {
-      _statsLoading = true;
-    });
-
     final stats = await _gateService.getGateStats(widget.eventId);
     if (mounted) {
       setState(() {
         _gateStats = stats;
-        _statsLoading = false;
       });
     }
   }
@@ -134,7 +129,10 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
     final String? rawCode = barcodes.first.rawValue;
     if (rawCode == null || rawCode.trim().isEmpty) return;
 
-    _processTicketScan(rawCode.trim());
+    final normalizedCode = QrNormalizer.normalize(rawCode);
+    if (normalizedCode.isEmpty) return;
+
+    _processTicketScan(normalizedCode);
   }
 
   Future<void> _processTicketScan(String ticketCode) async {
@@ -355,7 +353,7 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
                   : ListView.separated(
                       controller: scrollController,
                       itemCount: _recentScans.length,
-                      separatorBuilder: (_, __) => const Divider(color: Colors.white12, height: 1),
+                      separatorBuilder: (_, _) => const Divider(color: Colors.white12, height: 1),
                       itemBuilder: (ctx, index) {
                         final item = _recentScans[index];
                         final isSuccess = item.status == ScanStatus.success;
@@ -472,7 +470,8 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                final code = textController.text.trim();
+                final raw = textController.text.trim();
+                final code = QrNormalizer.normalize(raw);
                 if (code.isNotEmpty) {
                   Navigator.pop(ctx);
                   _processTicketScan(code);
