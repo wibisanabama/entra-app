@@ -6,6 +6,7 @@ import '../services/ticket_service.dart';
 class EventProvider extends ChangeNotifier {
   final EventService _eventService = EventService();
   final TicketService _ticketService = TicketService();
+  bool _disposed = false;
 
   List<EventModel> _events = [];
   Map<String, dynamic> _stats = {
@@ -15,6 +16,19 @@ class EventProvider extends ChangeNotifier {
   };
   bool _isLoading = false;
   String? _errorMessage;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   List<EventModel> get events => _events;
   Map<String, dynamic> get stats => _stats;
@@ -26,20 +40,35 @@ class EventProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      final results = await Future.wait([
-        _eventService.getOrganizerEvents(token),
-        _ticketService.getOrganizerStats(token),
-      ]);
+    bool eventsFailed = false;
+    bool statsFailed = false;
+    String? eventsError;
+    String? statsError;
 
-      _events = results[0] as List<EventModel>;
-      _stats = results[1] as Map<String, dynamic>;
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    final eventsFuture = _eventService.getOrganizerEvents(token).then((data) {
+      _events = data;
+    }).catchError((e) {
+      eventsFailed = true;
+      eventsError = e.toString().replaceAll('Exception: ', '');
+    });
+
+    final statsFuture = _ticketService.getOrganizerStats(token).then((data) {
+      _stats = data;
+    }).catchError((e) {
+      statsFailed = true;
+      statsError = e.toString().replaceAll('Exception: ', '');
+    });
+
+    await Future.wait([eventsFuture, statsFuture]);
+
+    if (eventsFailed && statsFailed) {
+      _errorMessage = eventsError ?? statsError ?? 'Gagal memuat data dashboard.';
+    } else {
+      _errorMessage = null;
     }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   EventModel? getEventById(String id) {
