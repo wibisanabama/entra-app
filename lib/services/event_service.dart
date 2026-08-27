@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/event.dart';
 import '../models/ticket_tier.dart';
+import 'auth_service.dart';
 
 class EventService {
   Future<List<EventModel>> getOrganizerEvents(String token) async {
@@ -20,6 +21,7 @@ class EventService {
       final List list = data['data'] ?? data ?? [];
       return list.map((item) => EventModel.fromJson(item)).toList();
     } else if (response.statusCode == 401) {
+      AuthService.broadcastSessionExpired();
       throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
     } else {
       throw Exception('Gagal memuat daftar event');
@@ -41,6 +43,8 @@ class EventService {
       if (data['data'] != null) {
         return EventModel.fromJson(data['data']);
       }
+    } else if (response.statusCode == 401) {
+      AuthService.broadcastSessionExpired();
     }
     return null;
   }
@@ -58,8 +62,12 @@ class EventService {
       final data = jsonDecode(response.body);
       final List list = data['data'] is List ? data['data'] : (data is List ? data : []);
       return list.map((item) => TicketTier.fromJson(item as Map<String, dynamic>)).toList();
+    } else if (response.statusCode == 401) {
+      AuthService.broadcastSessionExpired();
+      throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
     } else {
       throw Exception('Gagal memuat kategori tiket (HTTP ${response.statusCode})');
     }
   }
 }
+

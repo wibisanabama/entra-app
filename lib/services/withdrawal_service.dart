@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/balance.dart';
 import '../models/withdrawal.dart';
+import 'auth_service.dart';
 
 class WithdrawalService {
   Future<OrganizerBalance> getOrganizerBalance(String token) async {
@@ -23,6 +24,7 @@ class WithdrawalService {
         }
         return OrganizerBalance.empty();
       } else if (response.statusCode == 401) {
+        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         throw Exception('Gagal memuat informasi saldo organizer.');
@@ -49,6 +51,7 @@ class WithdrawalService {
         final List list = data['data'] ?? [];
         return list.map((item) => Withdrawal.fromJson(item)).toList();
       } else if (response.statusCode == 401) {
+        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         throw Exception('Gagal memuat riwayat penarikan dana.');
@@ -89,6 +92,7 @@ class WithdrawalService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         return Withdrawal.fromJson(data['data']);
       } else if (response.statusCode == 401) {
+        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         final msg = data['message'] ?? 'Gagal mengajukan penarikan dana.';
@@ -100,3 +104,4 @@ class WithdrawalService {
     }
   }
 }
+

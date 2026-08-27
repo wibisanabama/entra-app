@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/attendee.dart';
+import 'auth_service.dart';
 
 class TicketService {
   Future<Map<String, dynamic>> getOrganizerStats(String token) async {
@@ -22,6 +23,8 @@ class TicketService {
           'total_revenue': 0,
           'tickets_sold': 0,
         };
+      } else if (response.statusCode == 401) {
+        AuthService.broadcastSessionExpired();
       }
       return {
         'total_orders': 0,
@@ -53,6 +56,7 @@ class TicketService {
         final List list = data['data'] ?? [];
         return list.map((item) => Attendee.fromJson(item)).toList();
       } else if (response.statusCode == 401) {
+        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         throw Exception('Gagal memuat daftar peserta');
@@ -63,3 +67,4 @@ class TicketService {
     }
   }
 }
+

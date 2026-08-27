@@ -8,6 +8,7 @@ enum AttendeeStatusFilter { all, checkedIn, unchecked }
 class AttendeeProvider extends ChangeNotifier {
   final TicketService _ticketService = TicketService();
   final GateService _gateService = GateService();
+  bool _disposed = false;
 
   List<Attendee> _attendees = [];
   bool _isLoading = false;
@@ -15,6 +16,19 @@ class AttendeeProvider extends ChangeNotifier {
   String? _errorMessage;
   String _searchQuery = '';
   AttendeeStatusFilter _statusFilter = AttendeeStatusFilter.all;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   List<Attendee> get attendees {
     var list = _attendees;
