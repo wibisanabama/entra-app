@@ -86,31 +86,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final balance = withdrawalProvider.balance;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+              padding: const EdgeInsets.all(7),
+              decoration: const BoxDecoration(
+                color: Color(0xFFF4F4F5),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.qr_code_scanner,
-                color: Color(0xFF7C3AED),
-                size: 20,
+                Icons.qr_code_scanner_rounded,
+                color: Color(0xFF09090B),
+                size: 18,
               ),
             ),
             const SizedBox(width: 10),
             const Text(
               'Entra',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_balance_wallet_rounded),
+            icon: const Icon(Icons.account_balance_wallet_outlined, size: 22),
             tooltip: 'Keuangan & Saldo',
             onPressed: () => context.push('/withdrawals'),
           ),
@@ -119,9 +120,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF7C3AED), width: 1.5),
+                border: Border.all(color: const Color(0xFFE4E4E7), width: 1.5),
               ),
-              child: const Icon(Icons.person_rounded, size: 18, color: Colors.white),
+              child: const Icon(Icons.person_rounded, size: 18, color: Color(0xFF09090B)),
             ),
             tooltip: 'Profil & Pengaturan',
             onPressed: () => context.push('/profile'),
@@ -186,19 +187,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Saldo Tersedia Card (Main Highlight)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF4C1D95), Color(0xFF1E1B4B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: const Color(0xFFE4E4E7), width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -211,36 +209,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const Text(
                           'SALDO TERSEDIA',
                           style: TextStyle(
-                            color: Color(0xFFA78BFA),
+                            color: Color(0xFF71717A),
                             fontSize: 11,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.1,
                           ),
                         ),
                         InkWell(
                           onTap: () => context.push('/withdrawals'),
-                          child: const Row(
-                            children: [
-                              Text(
-                                'Kelola',
-                                style: TextStyle(color: Color(0xFFA78BFA), fontSize: 12, fontWeight: FontWeight.w600),
-                              ),
-                              Icon(Icons.chevron_right_rounded, color: Color(0xFFA78BFA), size: 16),
-                            ],
+                          borderRadius: BorderRadius.circular(999),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Kelola',
+                                  style: TextStyle(color: Color(0xFF09090B), fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(width: 2),
+                                Icon(Icons.chevron_right_rounded, color: Color(0xFF09090B), size: 16),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     Text(
                       _formatCurrency(balance.availableBalance),
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 28,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: Color(0xFF09090B),
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -248,12 +252,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             icon: const Icon(Icons.arrow_outward_rounded, size: 16),
                             label: const Text('Tarik Dana', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF4C1D95),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              backgroundColor: const Color(0xFF09090B),
+                              foregroundColor: Colors.white,
+                              shape: const StadiumBorder(),
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             onPressed: balance.availableBalance >= 10000
                                 ? () async {
@@ -271,15 +274,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(width: 8),
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white24),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                            foregroundColor: const Color(0xFF09090B),
+                            side: const BorderSide(color: Color(0xFFE4E4E7)),
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           ),
                           onPressed: () => context.push('/withdrawals'),
-                          child: const Text('Riwayat', style: TextStyle(fontSize: 13)),
+                          child: const Text('Riwayat', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                         ),
                       ],
                     ),
@@ -326,16 +327,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Daftar Event',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: Color(0xFF09090B),
+                      letterSpacing: -0.2,
                     ),
                   ),
-                  Text(
-                    '${filteredEvents.length} dari ${allEvents.length} Event',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F4F5),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      '${filteredEvents.length} dari ${allEvents.length} Event',
+                      style: const TextStyle(
+                        color: Color(0xFF71717A),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -345,6 +358,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Search Bar
               TextField(
                 controller: _searchController,
+                style: const TextStyle(color: Color(0xFF09090B), fontSize: 13),
                 onChanged: (val) {
                   setState(() {
                     _searchQuery = val.trim();
@@ -352,10 +366,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 decoration: InputDecoration(
                   hintText: 'Cari judul, deskripsi, atau lokasi...',
-                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  hintStyle: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 13),
+                  prefixIcon: const Icon(Icons.search_rounded, size: 18, color: Color(0xFFA1A1AA)),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          icon: const Icon(Icons.clear_rounded, size: 16, color: Color(0xFF71717A)),
                           onPressed: () {
                             _searchController.clear();
                             setState(() {
@@ -365,23 +380,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         )
                       : null,
                   filled: true,
-                  fillColor: theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  fillColor: const Color(0xFFFAFAFA),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    borderRadius: BorderRadius.circular(999),
+                    borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    borderRadius: BorderRadius.circular(999),
+                    borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1.5),
+                    borderRadius: BorderRadius.circular(999),
+                    borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
               // Status Filter Chips
               SingleChildScrollView(
@@ -530,21 +545,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           });
         }
       },
-      selectedColor: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+      selectedColor: const Color(0xFF09090B),
+      backgroundColor: Colors.white,
       labelStyle: TextStyle(
-        color: isSelected ? const Color(0xFFC4B5FD) : Colors.white70,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        color: isSelected ? Colors.white : const Color(0xFF71717A),
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
         fontSize: 12,
       ),
       side: BorderSide(
-        color: isSelected ? const Color(0xFF7C3AED) : Colors.white12,
+        color: isSelected ? const Color(0xFF09090B) : const Color(0xFFE4E4E7),
         width: 1,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      showCheckmark: true,
-      checkmarkColor: const Color(0xFFC4B5FD),
+      shape: const StadiumBorder(),
+      showCheckmark: false,
     );
   }
 }

@@ -17,9 +17,9 @@ class WithdrawalBottomSheet extends StatefulWidget {
     return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF111827), // gray-900
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
@@ -104,14 +104,14 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Pengajuan penarikan dana berhasil dikirim!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF09090B),
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(withdrawalProvider.errorMessage ?? 'Gagal mengajukan penarikan dana.'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: const Color(0xFFEF4444),
           ),
         );
       }
@@ -123,7 +123,7 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
     final withdrawalProvider = Provider.of<WithdrawalProvider>(context);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
       child: Form(
         key: _formKey,
         child: Column(
@@ -136,12 +136,12 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[700],
+                  color: const Color(0xFFE4E4E7),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Header Title
             Row(
@@ -152,24 +152,24 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFF09090B),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.grey, size: 20),
+                  icon: const Icon(Icons.close, color: Color(0xFF71717A), size: 20),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-            // Available Balance Banner
+            // Available Balance Banner (Mobbin Surface Card)
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.3)),
+                color: const Color(0xFFF4F4F5),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,43 +178,71 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Saldo Tersedia',
-                        style: TextStyle(color: Color(0xFFA78BFA), fontSize: 12),
+                        'SALDO TERSEDIA',
+                        style: TextStyle(
+                          color: Color(0xFF71717A),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
                         _formatCurrency(widget.availableBalance),
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF09090B),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ],
                   ),
-                  const Text(
-                    'Min. Rp 10.000',
-                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(9999),
+                      border: Border.all(color: const Color(0xFFE4E4E7)),
+                    ),
+                    child: const Text(
+                      'Min. Rp 10rb',
+                      style: TextStyle(color: Color(0xFF71717A), fontSize: 11, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Amount Input
             const Text(
               'Nominal Penarikan (Rp)',
-              style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF09090B), fontSize: 13, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             TextFormField(
               controller: _amountController,
               keyboardType: TextInputType.number,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold, fontSize: 16),
+              decoration: InputDecoration(
                 prefixText: 'Rp ',
-                prefixStyle: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                prefixStyle: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold),
                 hintText: '0',
+                hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
+                filled: true,
+                fillColor: const Color(0xFFF4F4F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                ),
               ),
               validator: (val) {
                 if (val == null || val.trim().isEmpty) {
@@ -230,7 +258,7 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 return null;
               },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
             // Quick Chips
             SingleChildScrollView(
@@ -238,58 +266,83 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
               child: Row(
                 children: [
                   ActionChip(
-                    label: const Text('25%', style: TextStyle(fontSize: 11)),
-                    backgroundColor: const Color(0xFF1F2937),
+                    label: const Text('25%', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    backgroundColor: const Color(0xFFF4F4F5),
+                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9999),
+                      side: const BorderSide(color: Color(0xFFE4E4E7)),
+                    ),
                     onPressed: () => _setAmountPercentage(0.25),
                   ),
                   const SizedBox(width: 6),
                   ActionChip(
-                    label: const Text('50%', style: TextStyle(fontSize: 11)),
-                    backgroundColor: const Color(0xFF1F2937),
+                    label: const Text('50%', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    backgroundColor: const Color(0xFFF4F4F5),
+                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9999),
+                      side: const BorderSide(color: Color(0xFFE4E4E7)),
+                    ),
                     onPressed: () => _setAmountPercentage(0.50),
                   ),
                   const SizedBox(width: 6),
                   ActionChip(
-                    label: const Text('Tarik Semua (100%)', style: TextStyle(fontSize: 11, color: Color(0xFFA78BFA), fontWeight: FontWeight.bold)),
-                    backgroundColor: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                    label: const Text('Tarik Semua (100%)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    backgroundColor: const Color(0xFF09090B),
+                    labelStyle: const TextStyle(color: Colors.white),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9999),
+                      side: BorderSide.none,
+                    ),
                     onPressed: () => _setAmountPercentage(1.0),
                   ),
                   const SizedBox(width: 6),
                   ActionChip(
-                    label: const Text('100rb', style: TextStyle(fontSize: 11)),
-                    backgroundColor: const Color(0xFF1F2937),
+                    label: const Text('100rb', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    backgroundColor: const Color(0xFFF4F4F5),
+                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9999),
+                      side: const BorderSide(color: Color(0xFFE4E4E7)),
+                    ),
                     onPressed: () => _setFixedAmount(100000),
                   ),
                   const SizedBox(width: 6),
                   ActionChip(
-                    label: const Text('500rb', style: TextStyle(fontSize: 11)),
-                    backgroundColor: const Color(0xFF1F2937),
+                    label: const Text('500rb', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    backgroundColor: const Color(0xFFF4F4F5),
+                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9999),
+                      side: const BorderSide(color: Color(0xFFE4E4E7)),
+                    ),
                     onPressed: () => _setFixedAmount(500000),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Bank Selection Dropdown
             const Text(
               'Bank Tujuan',
-              style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF09090B), fontSize: 13, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF111827),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF374151)),
+                color: const Color(0xFFF4F4F5),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _selectedBank,
                   isExpanded: true,
-                  dropdownColor: const Color(0xFF1F2937),
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  dropdownColor: Colors.white,
+                  style: const TextStyle(color: Color(0xFF09090B), fontSize: 14, fontWeight: FontWeight.w600),
                   items: _banks.map((bank) {
                     return DropdownMenuItem<String>(
                       value: bank,
@@ -304,19 +357,35 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Account Number
             const Text(
               'Nomor Rekening',
-              style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF09090B), fontSize: 13, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             TextFormField(
               controller: _accountNumberController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.w600),
+              decoration: InputDecoration(
                 hintText: 'Contoh: 1234567890',
+                hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
+                filled: true,
+                fillColor: const Color(0xFFF4F4F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                ),
               ),
               validator: (val) {
                 if (val == null || val.trim().isEmpty) {
@@ -325,18 +394,34 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Account Name
             const Text(
               'Nama Pemilik Rekening',
-              style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF09090B), fontSize: 13, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             TextFormField(
               controller: _accountNameController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.w600),
+              decoration: InputDecoration(
                 hintText: 'Sesuai dengan nama di buku tabungan',
+                hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
+                filled: true,
+                fillColor: const Color(0xFFF4F4F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                ),
               ),
               validator: (val) {
                 if (val == null || val.trim().isEmpty) {
@@ -345,39 +430,55 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
             // Notes
             const Text(
               'Catatan Penarikan (Opsional)',
-              style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Color(0xFF71717A), fontSize: 13, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(
+              style: const TextStyle(color: Color(0xFF09090B)),
+              decoration: InputDecoration(
                 hintText: 'Contoh: Pencairan tiket batch 1',
+                hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
+                filled: true,
+                fillColor: const Color(0xFFF4F4F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                ),
               ),
             ),
             const SizedBox(height: 20),
 
             // Fee Info
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF030712),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white10),
+                color: const Color(0xFFF4F4F5),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Biaya Layanan Admin', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                  Text('Gratis (Rp 0)', style: TextStyle(color: Colors.greenAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                  Text('Biaya Layanan Admin', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                  Text('Gratis (Rp 0)', style: TextStyle(color: Color(0xFF059669), fontSize: 12, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Submit Button
             SizedBox(
@@ -385,11 +486,10 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
               height: 48,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C3AED),
+                  backgroundColor: const Color(0xFF09090B),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  elevation: 0,
+                  shape: const StadiumBorder(),
                 ),
                 onPressed: withdrawalProvider.isSubmitting ? null : _submit,
                 child: withdrawalProvider.isSubmitting

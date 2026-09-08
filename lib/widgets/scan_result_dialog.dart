@@ -14,73 +14,84 @@ class ScanResultDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isSuccess = result.status == ScanStatus.success;
     final isAlreadyUsed = result.status == ScanStatus.alreadyUsed;
 
     final IconData icon = isSuccess
         ? Icons.check_circle_rounded
-        : (isAlreadyUsed ? Icons.error_outline_rounded : Icons.cancel_rounded);
+        : (isAlreadyUsed ? Icons.warning_amber_rounded : Icons.cancel_rounded);
 
     final Color statusColor = isSuccess
-        ? Colors.greenAccent
-        : (isAlreadyUsed ? Colors.amberAccent : Colors.redAccent);
+        ? const Color(0xFF059669) // green-600
+        : (isAlreadyUsed ? const Color(0xFFD97706) : const Color(0xFFDC2626)); // amber-600 / red-600
+
+    final Color statusBg = isSuccess
+        ? const Color(0xFFECFDF5) // green-50
+        : (isAlreadyUsed ? const Color(0xFFFFFBEB) : const Color(0xFFFEF2F2)); // amber-50 / red-50
 
     final String title = isSuccess
         ? 'CHECK-IN BERHASIL'
-        : (isAlreadyUsed ? 'TIKET SUDAH DIPAKAI' : 'TIKET TIDAK VALID');
+        : (isAlreadyUsed ? 'TIKET SUDAH DIGUNAKAN' : 'TIKET TIDAK VALID');
 
     return AlertDialog(
-      backgroundColor: theme.colorScheme.surfaceContainerHigh,
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
+        side: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
       ),
-      contentPadding: const EdgeInsets.all(24),
+      contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.15),
+              color: statusBg,
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
-              size: 48,
+              size: 40,
               color: statusColor,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           Text(
             title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
               color: statusColor,
-              letterSpacing: 1,
+              fontSize: 16,
+              letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             result.message,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
+            style: const TextStyle(
+              color: Color(0xFF71717A),
+              fontSize: 13,
+              height: 1.4,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(8),
+              color: const Color(0xFFF4F4F5),
+              borderRadius: BorderRadius.circular(9999),
+              border: Border.all(color: const Color(0xFFE4E4E7)),
             ),
             child: Text(
               result.ticketCode,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: const TextStyle(
                 fontFamily: 'monospace',
-                color: theme.colorScheme.onSurfaceVariant,
+                color: Color(0xFF09090B),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -89,22 +100,21 @@ class ScanResultDialog extends StatelessWidget {
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
+            height: 48,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 onDismiss();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7C3AED),
+                backgroundColor: const Color(0xFF09090B),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                elevation: 0,
+                shape: const StadiumBorder(),
               ),
               child: const Text(
                 'Scan Tiket Lain',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),

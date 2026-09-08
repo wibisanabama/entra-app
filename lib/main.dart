@@ -59,34 +59,108 @@ class _EntraAppState extends State<EntraApp> {
       child: MaterialApp.router(
         title: 'Entra',
         debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.dark,
-        darkTheme: ThemeData(
+        themeMode: ThemeMode.light,
+        theme: ThemeData(
           useMaterial3: true,
+          brightness: Brightness.light,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF7C3AED),
-            brightness: Brightness.dark,
+            seedColor: const Color(0xFF09090B),
+            brightness: Brightness.light,
+            primary: const Color(0xFF09090B),
+            onPrimary: Colors.white,
+            surface: Colors.white,
+            onSurface: const Color(0xFF09090B),
+            surfaceContainerHigh: const Color(0xFFF4F4F5),
+            outline: const Color(0xFFE4E4E7),
+            outlineVariant: const Color(0xFFF4F4F5),
           ),
-          scaffoldBackgroundColor: const Color(0xFF030712), // gray-950 like entra-web
+          scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF030712),
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.white,
+            foregroundColor: Color(0xFF09090B),
             elevation: 0,
             scrolledUnderElevation: 0,
+            surfaceTintColor: Colors.transparent,
+            centerTitle: false,
+            titleTextStyle: TextStyle(
+              color: Color(0xFF09090B),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.2,
+            ),
+            iconTheme: IconThemeData(
+              color: Color(0xFF09090B),
+            ),
+          ),
+          cardTheme: CardThemeData(
+            color: Colors.white,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF09090B),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: const StadiumBorder(),
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF09090B),
+              side: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
+              shape: const StadiumBorder(),
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            ),
           ),
           inputDecorationTheme: InputDecorationTheme(
             filled: true,
-            fillColor: const Color(0xFF111827), // gray-900
+            fillColor: const Color(0xFFFAFAFA),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            hintStyle: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 14),
+            labelStyle: const TextStyle(color: Color(0xFF71717A), fontSize: 14),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF374151)),
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF374151)),
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+            ),
+          ),
+          dialogTheme: DialogThemeData(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+          bottomSheetTheme: const BottomSheetThemeData(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
           ),
         ),

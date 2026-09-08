@@ -67,7 +67,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final eventProvider = Provider.of<EventProvider>(context);
     final attendeeProvider = Provider.of<AttendeeProvider>(context);
 
@@ -86,6 +85,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     final checkedIn = attendeeProvider.checkedInCount;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Detail Event'),
       ),
@@ -93,26 +93,23 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         onRefresh: _loadData,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Event Banner / Header Box
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: const Color(0xFFE4E4E7), width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -122,15 +119,20 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.black26,
-                        borderRadius: BorderRadius.circular(20),
+                        color: event.isPublished ? const Color(0xFFECFDF5) : const Color(0xFFFFFBEB),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: event.isPublished ? const Color(0xFFA7F3D0) : const Color(0xFFFDE68A),
+                          width: 0.8,
+                        ),
                       ),
                       child: Text(
                         event.status.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          color: event.isPublished ? const Color(0xFF059669) : const Color(0xFFD97706),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -139,18 +141,19 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       event.title,
                       style: const TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF09090B),
+                        letterSpacing: -0.4,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_rounded, size: 16, color: Colors.white70),
+                        const Icon(Icons.calendar_today_rounded, size: 14, color: Color(0xFFA1A1AA)),
                         const SizedBox(width: 6),
                         Text(
                           event.startDate.isNotEmpty ? event.startDate.split('T').first : '-',
-                          style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          style: const TextStyle(color: Color(0xFF71717A), fontSize: 13, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -160,10 +163,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               const SizedBox(height: 24),
 
               // Action Buttons Section
-              Text(
+              const Text(
                 'Aksi Lapangan',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  color: Color(0xFF09090B),
+                  letterSpacing: -0.2,
                 ),
               ),
               const SizedBox(height: 12),
@@ -171,67 +177,66 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               // Scan QR Button
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 52,
                 child: ElevatedButton.icon(
                   onPressed: () {
                     context.push('/events/${event.id}/scan');
                   },
-                  icon: const Icon(Icons.qr_code_scanner_rounded, size: 28),
+                  icon: const Icon(Icons.qr_code_scanner_rounded, size: 22),
                   label: const Text(
                     'Scan QR Tiket Peserta',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
+                    backgroundColor: const Color(0xFF09090B),
                     foregroundColor: Colors.white,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: const StadiumBorder(),
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
               // View Attendee List Button
               SizedBox(
                 width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
+                height: 50,
+                child: OutlinedButton.icon(
                   onPressed: () {
                     context.push('/events/${event.id}/attendees');
                   },
-                  icon: const Icon(Icons.people_alt_rounded),
+                  icon: const Icon(Icons.people_alt_outlined, size: 20),
                   label: const Text(
                     'Daftar Hadir Peserta',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.surfaceContainerHigh,
-                    foregroundColor: theme.colorScheme.onSurface,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF09090B),
+                    side: const BorderSide(color: Color(0xFFE4E4E7)),
+                    shape: const StadiumBorder(),
                   ),
                 ),
               ),
               const SizedBox(height: 28),
 
               // Live Check-in Stats
-              Text(
+              const Text(
                 'Statistik Kehadiran Gate',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  color: Color(0xFF09090B),
+                  letterSpacing: -0.2,
                 ),
               ),
               const SizedBox(height: 12),
 
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFE4E4E7), width: 1),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -240,62 +245,71 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       children: [
                         Text(
                           '$totalAttendees',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.onSurface,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 22,
+                            color: Color(0xFF09090B),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        const Text(
                           'Total Terdaftar',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          style: TextStyle(
+                            color: Color(0xFF71717A),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
                     Container(
-                      height: 40,
+                      height: 36,
                       width: 1,
-                      color: theme.colorScheme.outlineVariant,
+                      color: const Color(0xFFE4E4E7),
                     ),
                     Column(
                       children: [
                         Text(
                           '$checkedIn',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.greenAccent,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 22,
+                            color: Color(0xFF059669),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        const Text(
                           'Sudah Check-in',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          style: TextStyle(
+                            color: Color(0xFF71717A),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
                     Container(
-                      height: 40,
+                      height: 36,
                       width: 1,
-                      color: theme.colorScheme.outlineVariant,
+                      color: const Color(0xFFE4E4E7),
                     ),
                     Column(
                       children: [
                         Text(
                           '${totalAttendees - checkedIn}',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.amberAccent,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 22,
+                            color: Color(0xFFD97706),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
+                        const Text(
                           'Belum Hadir',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          style: TextStyle(
+                            color: Color(0xFF71717A),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -309,22 +323,32 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Rincian Kategori & Kuota Tiket',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      color: Color(0xFF09090B),
+                      letterSpacing: -0.2,
                     ),
                   ),
                   if (_loadingTiers)
                     const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF7C3AED)),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF09090B)),
                     )
                   else
-                    Text(
-                      '${_ticketTiers.length} Kategori',
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F4F5),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        '${_ticketTiers.length} Kategori',
+                        style: const TextStyle(color: Color(0xFF71717A), fontSize: 11, fontWeight: FontWeight.w600),
+                      ),
                     ),
                 ],
               ),
@@ -335,23 +359,25 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   padding: const EdgeInsets.all(24),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFE4E4E7)),
                   ),
-                  child: const Text('Memuat rincian tiket...', style: TextStyle(color: Colors.grey)),
+                  child: const Text('Memuat rincian tiket...', style: TextStyle(color: Color(0xFF71717A), fontSize: 13)),
                 )
               else if (_ticketTiers.isEmpty)
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFE4E4E7)),
                   ),
                   child: const Center(
                     child: Text(
                       'Belum ada kategori tiket untuk event ini.',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                      style: TextStyle(color: Color(0xFF71717A), fontSize: 13),
                     ),
                   ),
                 )
@@ -365,12 +391,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHigh,
-                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSoldOut
-                              ? Colors.red.withValues(alpha: 0.3)
-                              : Colors.transparent,
+                              ? const Color(0xFFFECACA)
+                              : const Color(0xFFE4E4E7),
                         ),
                       ),
                       child: Column(
@@ -384,23 +410,23 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
-                                  color: Colors.white,
+                                  color: Color(0xFF09090B),
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: isSoldOut
-                                      ? Colors.red.withValues(alpha: 0.2)
-                                      : const Color(0xFF7C3AED).withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(6),
+                                      ? const Color(0xFFFEF2F2)
+                                      : const Color(0xFFF4F4F5),
+                                  borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
                                   isSoldOut ? 'SOLD OUT' : _formatCurrency(tier.price),
                                   style: TextStyle(
-                                    color: isSoldOut ? Colors.redAccent : const Color(0xFFA78BFA),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                    color: isSoldOut ? const Color(0xFFDC2626) : const Color(0xFF09090B),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ),
@@ -412,13 +438,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             children: [
                               Text(
                                 'Kapasitas Kuota: ${tier.capacity} tiket',
-                                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
                               ),
                               Text(
                                 tier.price > 0
                                     ? 'Harga: ${_formatCurrency(tier.price)}'
                                     : 'Gratis',
-                                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                style: const TextStyle(color: Color(0xFF09090B), fontSize: 12, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
@@ -426,19 +452,19 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             const SizedBox(height: 6),
                             Text(
                               tier.description,
-                              style: const TextStyle(color: Colors.white54, fontSize: 11),
+                              style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
                           const SizedBox(height: 10),
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(999),
                             child: LinearProgressIndicator(
                               value: fillRate > 0 ? fillRate : 0.05,
-                              backgroundColor: Colors.white12,
+                              backgroundColor: const Color(0xFFF4F4F5),
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                isSoldOut ? Colors.redAccent : const Color(0xFF10B981),
+                                isSoldOut ? const Color(0xFFDC2626) : const Color(0xFF09090B),
                               ),
                               minHeight: 6,
                             ),
@@ -453,17 +479,21 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
               // Description Section
               if (event.description.isNotEmpty) ...[
-                Text(
+                const Text(
                   'Deskripsi Event',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    color: Color(0xFF09090B),
+                    letterSpacing: -0.2,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   event.description,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  style: const TextStyle(
+                    color: Color(0xFF71717A),
+                    fontSize: 13,
                     height: 1.5,
                   ),
                 ),

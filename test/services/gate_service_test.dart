@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:entra_app/models/gate_stats.dart';
 import 'package:entra_app/services/auth_service.dart';
 import 'package:entra_app/services/gate_service.dart';
 

@@ -16,18 +16,17 @@ class AttendeeTile extends StatelessWidget {
   });
 
   void _showAttendeeDetails(BuildContext context) {
-    final theme = Theme.of(context);
     final isCheckedIn = attendee.isCheckedIn;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: theme.colorScheme.surfaceContainerHigh,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (ctx) {
         return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,35 +36,38 @@ class AttendeeTile extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.4),
+                    color: const Color(0xFFE4E4E7),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
                       attendee.userName,
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      style: const TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF09090B),
                       ),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isCheckedIn
-                          ? Colors.green.withValues(alpha: 0.15)
-                          : Colors.amber.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
+                      color: isCheckedIn ? const Color(0xFFECFDF5) : const Color(0xFFFFFBEB),
+                      borderRadius: BorderRadius.circular(9999),
+                      border: Border.all(
+                        color: isCheckedIn ? const Color(0xFFA7F3D0) : const Color(0xFFFDE68A),
+                      ),
                     ),
                     child: Text(
                       isCheckedIn ? 'Hadir (Checked In)' : 'Belum Hadir',
                       style: TextStyle(
-                        color: isCheckedIn ? Colors.greenAccent : Colors.amberAccent,
+                        color: isCheckedIn ? const Color(0xFF059669) : const Color(0xFFD97706),
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -77,48 +79,56 @@ class AttendeeTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   attendee.userEmail,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  style: const TextStyle(
+                    color: Color(0xFF71717A),
+                    fontSize: 13,
                   ),
                 ),
               ],
               const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 12),
+              const Divider(color: Color(0xFFE4E4E7), height: 1),
+              const SizedBox(height: 16),
               
               // Ticket Code Box
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3)),
+                  color: const Color(0xFFF4F4F5),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFE4E4E7)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.confirmation_number_outlined, size: 20, color: Color(0xFF7C3AED)),
-                    const SizedBox(width: 10),
+                    const Icon(Icons.confirmation_number_outlined, size: 20, color: Color(0xFF09090B)),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
                             'KODE TIKET',
-                            style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Color(0xFF71717A),
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
                           ),
+                          const SizedBox(height: 2),
                           Text(
                             attendee.ticketCode,
                             style: const TextStyle(
                               fontFamily: 'monospace',
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
+                              color: Color(0xFF09090B),
                             ),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.copy_rounded, size: 18),
+                      icon: const Icon(Icons.copy_rounded, size: 18, color: Color(0xFF09090B)),
                       tooltip: 'Salin Kode',
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: attendee.ticketCode));
@@ -134,7 +144,7 @@ class AttendeeTile extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
               // Action Button
               if (!isCheckedIn) ...[
@@ -143,16 +153,15 @@ class AttendeeTile extends StatelessWidget {
                   height: 48,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C3AED),
+                      backgroundColor: const Color(0xFF09090B),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      elevation: 0,
+                      shape: const StadiumBorder(),
                     ),
-                    icon: const Icon(Icons.how_to_reg_rounded),
+                    icon: const Icon(Icons.how_to_reg_rounded, size: 18),
                     label: const Text(
                       'Check-In Manual Sekarang',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                     onPressed: () {
                       Navigator.pop(ctx);
@@ -163,10 +172,15 @@ class AttendeeTile extends StatelessWidget {
               ] else ...[
                 SizedBox(
                   width: double.infinity,
-                  height: 44,
+                  height: 48,
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Tutup'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF09090B),
+                      side: const BorderSide(color: Color(0xFFE4E4E7)),
+                      shape: const StadiumBorder(),
+                    ),
+                    child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -179,7 +193,6 @@ class AttendeeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isCheckedIn = attendee.isCheckedIn;
 
     final initial = attendee.userName.isNotEmpty
@@ -188,31 +201,36 @@ class AttendeeTile extends StatelessWidget {
 
     return InkWell(
       onTap: () => _showAttendeeDetails(context),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isCheckedIn
-                ? Colors.green.withValues(alpha: 0.15)
-                : Colors.transparent,
+            color: const Color(0xFFE4E4E7),
+            width: 1,
           ),
         ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: isCheckedIn
-                  ? Colors.green.withValues(alpha: 0.15)
-                  : const Color(0xFF7C3AED).withValues(alpha: 0.2),
-              child: Text(
-                initial,
-                style: TextStyle(
-                  color: isCheckedIn ? Colors.greenAccent : const Color(0xFF7C3AED),
-                  fontWeight: FontWeight.bold,
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFF4F4F5),
+                border: Border.all(color: const Color(0xFFE4E4E7)),
+              ),
+              child: Center(
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    color: Color(0xFF09090B),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
@@ -223,26 +241,29 @@ class AttendeeTile extends StatelessWidget {
                 children: [
                   Text(
                     attendee.userName,
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
+                      color: Color(0xFF09090B),
                     ),
                   ),
                   if (attendee.userEmail.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       attendee.userEmail,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                      style: const TextStyle(
+                        color: Color(0xFF71717A),
+                        fontSize: 12,
                       ),
                     ),
                   ],
                   const SizedBox(height: 4),
                   Text(
                     'Kode: ${attendee.ticketCode.length > 16 ? '${attendee.ticketCode.substring(0, 16)}...' : attendee.ticketCode}',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    style: const TextStyle(
+                      color: Color(0xFFA1A1AA),
                       fontFamily: 'monospace',
+                      fontSize: 11,
                     ),
                   ),
                 ],
@@ -253,25 +274,26 @@ class AttendeeTile extends StatelessWidget {
             // Trailing Action Badge or Check-In Button
             if (isCheckedIn)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(20),
+                  color: const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(9999),
+                  border: Border.all(color: const Color(0xFFA7F3D0)),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.check_circle,
-                      size: 14,
-                      color: Colors.greenAccent,
+                      size: 13,
+                      color: Color(0xFF059669),
                     ),
                     SizedBox(width: 4),
                     Text(
                       'Hadir',
                       style: TextStyle(
-                        color: Colors.greenAccent,
-                        fontSize: 12,
+                        color: Color(0xFF059669),
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -282,14 +304,13 @@ class AttendeeTile extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: isProcessing ? null : onCheckIn,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C3AED),
+                  backgroundColor: const Color(0xFF09090B),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  shape: const StadiumBorder(),
                 ),
                 icon: isProcessing
                     ? const SizedBox(

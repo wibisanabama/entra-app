@@ -40,19 +40,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF111827),
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
             return Padding(
               padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: MediaQuery.of(modalContext).viewInsets.bottom + 24,
+                left: 24,
+                right: 24,
+                top: 16,
+                bottom: MediaQuery.of(modalContext).viewInsets.bottom + 28,
               ),
               child: Form(
                 key: formKey,
@@ -65,22 +65,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade700,
+                          color: const Color(0xFFE4E4E7),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
                     const Row(
                       children: [
-                        Icon(Icons.edit_rounded, color: Color(0xFF7C3AED), size: 20),
+                        Icon(Icons.edit_rounded, color: Color(0xFF09090B), size: 20),
                         SizedBox(width: 8),
                         Text(
                           'Ubah Data Profil',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Color(0xFF09090B),
                           ),
                         ),
                       ],
@@ -88,24 +88,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: nameController,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.w600),
                       decoration: InputDecoration(
                         labelText: 'Nama Lengkap',
-                        labelStyle: TextStyle(color: Colors.grey.shade400),
-                        prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF7C3AED)),
+                        labelStyle: const TextStyle(color: Color(0xFF71717A)),
+                        prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF09090B)),
                         filled: true,
-                        fillColor: const Color(0xFF030712),
+                        fillColor: const Color(0xFFF4F4F5),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade800),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade800),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF7C3AED)),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
                         ),
                       ),
                       validator: (value) {
@@ -115,41 +115,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     TextFormField(
                       controller: phoneController,
                       keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.w600),
                       decoration: InputDecoration(
                         labelText: 'Nomor Telepon / WhatsApp',
-                        labelStyle: TextStyle(color: Colors.grey.shade400),
-                        prefixIcon: const Icon(Icons.phone_outlined, color: Color(0xFF7C3AED)),
+                        labelStyle: const TextStyle(color: Color(0xFF71717A)),
+                        prefixIcon: const Icon(Icons.phone_outlined, color: Color(0xFF09090B)),
                         filled: true,
-                        fillColor: const Color(0xFF030712),
+                        fillColor: const Color(0xFFF4F4F5),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade800),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade800),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF7C3AED)),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7C3AED),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          backgroundColor: const Color(0xFF09090B),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: const StadiumBorder(),
                         ),
                         onPressed: isSaving
                             ? null
@@ -171,14 +171,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
                                           content: Text('Profil berhasil diperbarui!'),
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: Color(0xFF09090B),
                                         ),
                                       );
                                     } else {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Text(authProvider.errorMessage ?? 'Gagal memperbarui profil'),
-                                          backgroundColor: Colors.redAccent,
+                                          backgroundColor: const Color(0xFFEF4444),
                                         ),
                                       );
                                     }
@@ -225,22 +225,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            backgroundColor: const Color(0xFF111827),
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: const BorderSide(color: Color(0xFFE4E4E7)),
+            ),
             title: const Row(
               children: [
-                Icon(Icons.mark_email_read_rounded, color: Colors.green),
+                Icon(Icons.mark_email_read_rounded, color: Color(0xFF059669)),
                 SizedBox(width: 8),
-                Text('Tautan Terkirim', style: TextStyle(color: Colors.white)),
+                Text('Tautan Terkirim', style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold)),
               ],
             ),
             content: Text(
               'Tautan pemulihan kata sandi telah dikirimkan ke $email. Silakan periksa kotak masuk atau folder spam Anda.',
-              style: TextStyle(color: Colors.grey.shade300, fontSize: 13),
+              style: const TextStyle(color: Color(0xFF71717A), fontSize: 13),
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Mengerti', style: TextStyle(color: Color(0xFF7C3AED))),
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF09090B),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: const Text('Mengerti', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
               ),
             ],
           ),
@@ -249,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result['message'] ?? 'Gagal mengirim permintaan reset kata sandi.'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: const Color(0xFFEF4444),
           ),
         );
       }
@@ -268,27 +282,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (user == null) {
       return const Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: Color(0xFF09090B)),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF030712),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF030712),
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF09090B)),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           'Profil & Akun Organizer',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF09090B)),
         ),
       ),
       body: RefreshIndicator(
+        color: const Color(0xFF09090B),
         onRefresh: () async {
           if (authProvider.token != null) {
             await Future.wait([
@@ -303,22 +320,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Identity Card
+              // Profile Identity Card (Mobbin Clean White Container)
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF7C3AED).withValues(alpha: 0.25),
-                      const Color(0xFF111827),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: const Color(0xFF7C3AED).withValues(alpha: 0.4),
+                    color: const Color(0xFFE4E4E7),
+                    width: 1,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
@@ -330,10 +348,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 64,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: const Color(0xFF7C3AED),
+                            color: const Color(0xFFF4F4F5),
                             border: Border.all(
-                              color: const Color(0xFF7C3AED).withValues(alpha: 0.8),
-                              width: 2,
+                              color: const Color(0xFFE4E4E7),
+                              width: 1.5,
                             ),
                           ),
                           child: Center(
@@ -342,7 +360,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Color(0xFF09090B),
                               ),
                             ),
                           ),
@@ -357,31 +375,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Color(0xFF09090B),
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 user.email,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 13,
-                                  color: Colors.grey.shade400,
+                                  color: Color(0xFF71717A),
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                                  color: const Color(0xFFECFDF5),
+                                  borderRadius: BorderRadius.circular(9999),
+                                  border: Border.all(color: const Color(0xFFA7F3D0)),
                                 ),
                                 child: Text(
                                   user.role.toUpperCase(),
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.greenAccent,
+                                    color: Color(0xFF059669),
                                   ),
                                 ),
                               ),
@@ -391,15 +409,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const Divider(color: Colors.white12),
-                    const SizedBox(height: 8),
+                    const Divider(color: Color(0xFFE4E4E7), height: 1),
+                    const SizedBox(height: 12),
                     // User UUID with copy action
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'User ID:',
-                          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                          style: TextStyle(color: Color(0xFF71717A), fontSize: 12),
                         ),
                         InkWell(
                           onTap: () {
@@ -407,24 +425,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('User ID disalin ke clipboard!'),
+                                backgroundColor: Color(0xFF09090B),
                                 duration: Duration(seconds: 2),
                               ),
                             );
                           },
-                          child: Row(
-                            children: [
-                              Text(
-                                '${user.id.substring(0, 8)}...',
-                                style: const TextStyle(
-                                  fontFamily: 'monospace',
-                                  color: Color(0xFF7C3AED),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${user.id.substring(0, 8)}...',
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    color: Color(0xFF09090B),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF7C3AED)),
-                            ],
+                                const SizedBox(width: 4),
+                                const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF09090B)),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -433,7 +456,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 22),
 
               // 3 Quick Metrics
               const Text(
@@ -441,7 +464,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white70,
+                  color: Color(0xFF09090B),
                 ),
               ),
               const SizedBox(height: 10),
@@ -451,22 +474,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.grey.shade800),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Saldo Bersih', style: TextStyle(fontSize: 11, color: Colors.grey.shade400)),
+                          const Text('Saldo Bersih', style: TextStyle(fontSize: 11, color: Color(0xFF71717A))),
                           const SizedBox(height: 4),
                           Text(
                             _formatCurrency(balance.availableBalance),
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: Colors.greenAccent,
+                              color: Color(0xFF059669),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -477,21 +502,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.grey.shade800),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Tiket Terjual', style: TextStyle(fontSize: 11, color: Colors.grey.shade400)),
+                          const Text('Tiket Terjual', style: TextStyle(fontSize: 11, color: Color(0xFF71717A))),
                           const SizedBox(height: 4),
                           Text(
                             '${stats['tickets_sold'] ?? 0}',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Color(0xFF09090B),
                             ),
                           ),
                         ],
@@ -503,21 +528,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.grey.shade800),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Event Aktif', style: TextStyle(fontSize: 11, color: Colors.grey.shade400)),
+                          const Text('Event Aktif', style: TextStyle(fontSize: 11, color: Color(0xFF71717A))),
                           const SizedBox(height: 4),
                           Text(
                             '${eventProvider.events.length}',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF7C3AED),
+                              color: Color(0xFF09090B),
                             ),
                           ),
                         ],
@@ -535,7 +560,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white70,
+                  color: Color(0xFF09090B),
                 ),
               ),
               const SizedBox(height: 10),
@@ -543,42 +568,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Edit Personal Info Tile
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF111827),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade800),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFE4E4E7)),
                 ),
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.person_outline_rounded, color: Color(0xFF7C3AED)),
-                      title: const Text('Informasi Profil', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                      leading: const Icon(Icons.person_outline_rounded, color: Color(0xFF09090B)),
+                      title: const Text('Informasi Profil', style: TextStyle(color: Color(0xFF09090B), fontSize: 14, fontWeight: FontWeight.w600)),
                       subtitle: Text(
                         'Nama: ${user.name} • Telp: ${user.phone ?? '-'}',
-                        style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+                        style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
                       ),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFA1A1AA)),
                       onTap: () => _showEditProfileBottomSheet(context),
                     ),
-                    const Divider(height: 1, color: Colors.white10),
+                    const Divider(height: 1, color: Color(0xFFF4F4F5)),
                     ListTile(
-                      leading: const Icon(Icons.lock_reset_rounded, color: Color(0xFF7C3AED)),
-                      title: const Text('Reset Kata Sandi', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                      subtitle: Text('Kirim tautan pembaruan kata sandi ke email', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                      leading: const Icon(Icons.lock_reset_rounded, color: Color(0xFF09090B)),
+                      title: const Text('Reset Kata Sandi', style: TextStyle(color: Color(0xFF09090B), fontSize: 14, fontWeight: FontWeight.w600)),
+                      subtitle: const Text('Kirim tautan pembaruan kata sandi ke email', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
                       trailing: _isResettingPassword
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child: CircularProgressIndicator(color: Color(0xFF7C3AED), strokeWidth: 2),
+                              child: CircularProgressIndicator(color: Color(0xFF09090B), strokeWidth: 2),
                             )
-                          : const Icon(Icons.send_rounded, color: Color(0xFF7C3AED), size: 18),
+                          : const Icon(Icons.send_rounded, color: Color(0xFF09090B), size: 18),
                       onTap: _isResettingPassword ? null : () => _handlePasswordReset(context),
                     ),
-                    const Divider(height: 1, color: Colors.white10),
+                    const Divider(height: 1, color: Color(0xFFF4F4F5)),
                     ListTile(
-                      leading: const Icon(Icons.account_balance_wallet_outlined, color: Colors.greenAccent),
-                      title: const Text('Manajemen Penarikan Dana', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                      subtitle: Text('Tarik saldo pendapatan tiket ke rekening bank', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                      leading: const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFF09090B)),
+                      title: const Text('Manajemen Penarikan Dana', style: TextStyle(color: Color(0xFF09090B), fontSize: 14, fontWeight: FontWeight.w600)),
+                      subtitle: const Text('Tarik saldo pendapatan tiket ke rekening bank', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFA1A1AA)),
                       onTap: () => context.push('/withdrawals'),
                     ),
                   ],
@@ -593,48 +618,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white70,
+                  color: Color(0xFF09090B),
                 ),
               ),
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF111827),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade800),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFE4E4E7)),
                 ),
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Host Server IP', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                        Text(ApiConfig.host, style: const TextStyle(color: Colors.white, fontFamily: 'monospace', fontSize: 12)),
+                        const Text('Host Server IP', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                        Text(ApiConfig.host, style: const TextStyle(color: Color(0xFF09090B), fontFamily: 'monospace', fontSize: 12, fontWeight: FontWeight.bold)),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Auth Gateway', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                        const Text('Port :8081 (Aktif)', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
+                        const Text('Auth Gateway', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                        Row(
+                          children: [
+                            Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
+                            const SizedBox(width: 6),
+                            const Text('Port :8081 (Aktif)', style: TextStyle(color: Color(0xFF059669), fontSize: 12, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Ticket & Financial', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                        const Text('Port :8083 (Aktif)', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
+                        const Text('Ticket & Financial', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                        Row(
+                          children: [
+                            Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
+                            const SizedBox(width: 6),
+                            const Text('Port :8083 (Aktif)', style: TextStyle(color: Color(0xFF059669), fontSize: 12, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Gate Check-In API', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                        const Text('Port :8086 (Aktif)', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
+                        const Text('Gate Check-In API', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                        Row(
+                          children: [
+                            Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
+                            const SizedBox(width: 6),
+                            const Text('Port :8086 (Aktif)', style: TextStyle(color: Color(0xFF059669), fontSize: 12, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -648,39 +691,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 height: 48,
                 child: OutlinedButton.icon(
-                  icon: const Icon(Icons.logout_rounded, color: Colors.redAccent, size: 18),
+                  icon: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444), size: 18),
                   label: const Text(
                     'Keluar dari Akun',
                     style: TextStyle(
-                      color: Colors.redAccent,
+                      color: Color(0xFFEF4444),
                       fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.5)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                    side: const BorderSide(color: Color(0xFFFECACA)),
+                    shape: const StadiumBorder(),
                   ),
                   onPressed: () async {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        backgroundColor: const Color(0xFF111827),
-                        title: const Text('Keluar dari Akun?', style: TextStyle(color: Colors.white)),
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          side: const BorderSide(color: Color(0xFFE4E4E7)),
+                        ),
+                        title: const Text(
+                          'Keluar dari Akun?',
+                          style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold),
+                        ),
                         content: const Text(
                           'Anda akan keluar dari sesi akun organizer pada aplikasi ini.',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: Color(0xFF71717A), fontSize: 13),
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Batal', style: TextStyle(color: Colors.grey)),
+                            child: const Text('Batal', style: TextStyle(color: Color(0xFF71717A), fontWeight: FontWeight.bold)),
                           ),
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFEF4444),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: const StadiumBorder(),
+                            ),
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text('Keluar', style: TextStyle(color: Colors.white)),
+                            child: const Text('Keluar', style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),

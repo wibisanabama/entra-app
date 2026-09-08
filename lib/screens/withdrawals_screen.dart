@@ -46,32 +46,38 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
   Widget _buildStatusBadge(String status) {
     Color bg;
     Color text;
+    Color border;
     String label;
 
     switch (status.toUpperCase()) {
       case 'PENDING':
-        bg = Colors.amber.withValues(alpha: 0.15);
-        text = Colors.amberAccent;
+        bg = const Color(0xFFFFFBEB);
+        text = const Color(0xFFD97706);
+        border = const Color(0xFFFDE68A);
         label = 'Menunggu';
         break;
       case 'APPROVED':
-        bg = Colors.blue.withValues(alpha: 0.15);
-        text = Colors.blueAccent;
+        bg = const Color(0xFFEFF6FF);
+        text = const Color(0xFF2563EB);
+        border = const Color(0xFFBFDBFE);
         label = 'Disetujui';
         break;
       case 'PAID':
-        bg = Colors.green.withValues(alpha: 0.15);
-        text = Colors.greenAccent;
+        bg = const Color(0xFFECFDF5);
+        text = const Color(0xFF059669);
+        border = const Color(0xFFA7F3D0);
         label = 'Selesai';
         break;
       case 'REJECTED':
-        bg = Colors.red.withValues(alpha: 0.15);
-        text = Colors.redAccent;
+        bg = const Color(0xFFFEF2F2);
+        text = const Color(0xFFDC2626);
+        border = const Color(0xFFFECACA);
         label = 'Ditolak';
         break;
       default:
-        bg = Colors.grey.withValues(alpha: 0.15);
-        text = Colors.grey;
+        bg = const Color(0xFFF4F4F5);
+        text = const Color(0xFF71717A);
+        border = const Color(0xFFE4E4E7);
         label = status;
     }
 
@@ -79,14 +85,15 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(9999),
+        border: Border.all(color: border),
       ),
       child: Text(
         label,
         style: TextStyle(
           color: text,
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -96,14 +103,17 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF111827),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: Color(0xFFE4E4E7)),
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
               'Rincian Penarikan',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF09090B)),
             ),
             _buildStatusBadge(w.status),
           ],
@@ -118,14 +128,14 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                 child: Text(
                   _formatCurrency(w.amount),
                   style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF09090B),
                   ),
                 ),
               ),
             ),
-            const Divider(color: Colors.white12, height: 24),
+            const Divider(color: Color(0xFFE4E4E7), height: 24),
             _buildDetailRow('Bank Tujuan', w.bankName),
             _buildDetailRow('Nomor Rekening', w.accountNumber),
             _buildDetailRow('Nama Penerima', w.accountName),
@@ -135,21 +145,21 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
             if (w.rejectionReason != null && w.rejectionReason!.isNotEmpty)
               Container(
                 margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                  color: const Color(0xFFFEF2F2),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFFECACA)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline, color: Colors.redAccent, size: 16),
-                    const SizedBox(width: 6),
+                    const Icon(Icons.info_outline, color: Color(0xFFDC2626), size: 16),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Alasan Ditolak: ${w.rejectionReason!}',
-                        style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                        style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12),
                       ),
                     ),
                   ],
@@ -158,9 +168,19 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Tutup', style: TextStyle(color: Color(0xFF7C3AED))),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(ctx),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF09090B),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: const StadiumBorder(),
+              ),
+              child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
           ),
         ],
       ),
@@ -174,13 +194,13 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+          Text(label, style: const TextStyle(color: Color(0xFF71717A), fontSize: 13)),
           const SizedBox(width: 12),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13),
+              style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.w600, fontSize: 13),
             ),
           ),
         ],
@@ -190,7 +210,6 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final withdrawalProvider = Provider.of<WithdrawalProvider>(context);
     final balance = withdrawalProvider.balance;
     final withdrawals = withdrawalProvider.withdrawals;
@@ -201,17 +220,30 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
     }).toList();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Keuangan & Saldo'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: const Text(
+          'Keuangan & Saldo',
+          style: TextStyle(
+            color: Color(0xFF09090B),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFF09090B)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const Icon(Icons.refresh_rounded, color: Color(0xFF09090B)),
             tooltip: 'Refresh',
             onPressed: _loadData,
           ),
         ],
       ),
       body: RefreshIndicator(
+        color: const Color(0xFF09090B),
         onRefresh: _loadData,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -219,20 +251,16 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Hero Card: Saldo Tersedia & Tarik Saldo CTA
+              // Hero Card: Pitch Black Mobbin Hero Card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF4C1D95), Color(0xFF1E1B4B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+                  color: const Color(0xFF09090B),
+                  borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -247,8 +275,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                         const Text(
                           'SALDO TERSEDIA',
                           style: TextStyle(
-                            color: Color(0xFFA78BFA),
-                            fontSize: 12,
+                            color: Color(0xFFA1A1AA),
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                           ),
@@ -256,47 +284,46 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
+                            color: Colors.white.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.account_balance_wallet_rounded,
-                            color: Color(0xFFA78BFA),
-                            size: 18,
+                            color: Colors.white,
+                            size: 16,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
                       _formatCurrency(balance.availableBalance),
                       style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
                     const Text(
                       'Dana bersih siap ditarik ke rekening bank',
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      style: TextStyle(color: Color(0xFFA1A1AA), fontSize: 12),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
                     SizedBox(
                       width: double.infinity,
+                      height: 44,
                       child: ElevatedButton.icon(
-                        icon: const Icon(Icons.arrow_outward_rounded, size: 18),
+                        icon: const Icon(Icons.arrow_outward_rounded, size: 16),
                         label: const Text(
                           'Tarik Dana Sekarang',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF4C1D95),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          foregroundColor: const Color(0xFF09090B),
+                          elevation: 0,
+                          shape: const StadiumBorder(),
                         ),
                         onPressed: balance.availableBalance >= 10000
                             ? () async {
@@ -316,25 +343,25 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // 3 Metric Sub-Cards
+              // 3 Metric Sub-Cards (Mobbin Clean White Cards)
               Row(
                 children: [
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white10),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Total Omset', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                          const Text('Total Omset', style: TextStyle(color: Color(0xFF71717A), fontSize: 11)),
                           const SizedBox(height: 4),
                           Text(
                             _formatCurrency(balance.totalRevenue),
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                            style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold, fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -347,18 +374,18 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white10),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Proses (Pending)', style: TextStyle(color: Colors.amber, fontSize: 11)),
+                          const Text('Pending', style: TextStyle(color: Color(0xFFD97706), fontSize: 11)),
                           const SizedBox(height: 4),
                           Text(
                             _formatCurrency(balance.pendingAmount),
-                            style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, fontSize: 12),
+                            style: const TextStyle(color: Color(0xFFD97706), fontWeight: FontWeight.bold, fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -371,18 +398,18 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF111827),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white10),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Sudah Cair', style: TextStyle(color: Colors.greenAccent, fontSize: 11)),
+                          const Text('Sudah Cair', style: TextStyle(color: Color(0xFF059669), fontSize: 11)),
                           const SizedBox(height: 4),
                           Text(
                             _formatCurrency(balance.paidAmount),
-                            style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 12),
+                            style: const TextStyle(color: Color(0xFF059669), fontWeight: FontWeight.bold, fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -395,11 +422,12 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
               const SizedBox(height: 24),
 
               // History Section Header
-              Text(
+              const Text(
                 'Riwayat Penarikan',
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  fontSize: 16,
+                  color: Color(0xFF09090B),
                 ),
               ),
               const SizedBox(height: 12),
@@ -417,36 +445,35 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               // Withdrawals List
               if (withdrawalProvider.isLoading)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(child: CircularProgressIndicator(color: Color(0xFF09090B))),
                 )
               else if (filteredWithdrawals.isEmpty)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF111827),
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFE4E4E7)),
                   ),
-                  child: Column(
+                  child: const Column(
                     children: [
-                      Icon(Icons.history_rounded, size: 48, color: Colors.grey[600]),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Belum ada riwayat penarikan',
-                        style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 4),
+                      Icon(Icons.history_rounded, size: 48, color: Color(0xFFD4D4D8)),
+                      SizedBox(height: 12),
                       Text(
-                        _statusFilter == 'ALL'
-                            ? 'Saldo hasil penjualan tiket dapat ditarik kapan saja.'
-                            : 'Tidak ada transaksi dengan status $_statusFilter.',
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        'Belum ada riwayat penarikan',
+                        style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Saldo hasil penjualan tiket dapat ditarik kapan saja ke rekening bank.',
+                        style: TextStyle(color: Color(0xFF71717A), fontSize: 12),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -462,25 +489,25 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                     final w = filteredWithdrawals[idx];
                     return InkWell(
                       onTap: () => _showDetailDialog(w),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(18),
                       child: Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF111827),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: const Color(0xFFE4E4E7)),
                         ),
                         child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1F2937),
-                                borderRadius: BorderRadius.circular(10),
+                                color: const Color(0xFFF4F4F5),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
                                 Icons.account_balance_rounded,
-                                color: Color(0xFFA78BFA),
+                                color: Color(0xFF09090B),
                                 size: 20,
                               ),
                             ),
@@ -492,22 +519,22 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                                   Text(
                                     _formatCurrency(w.amount),
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF09090B),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    '${w.bankName} - ${w.accountNumber}',
-                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                    '${w.bankName} • ${w.accountNumber}',
+                                    style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     _formatDate(w.createdAt),
-                                    style: const TextStyle(color: Colors.white30, fontSize: 10),
+                                    style: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 10),
                                   ),
                                 ],
                               ),
@@ -536,19 +563,20 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
           label,
           style: TextStyle(
             fontSize: 11,
-            color: isSelected ? Colors.white : Colors.grey,
+            color: isSelected ? Colors.white : const Color(0xFF71717A),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
         selected: isSelected,
-        backgroundColor: const Color(0xFF111827),
-        selectedColor: const Color(0xFF7C3AED),
+        backgroundColor: const Color(0xFFF4F4F5),
+        selectedColor: const Color(0xFF09090B),
         checkmarkColor: Colors.white,
-        showCheckmark: true,
+        showCheckmark: false,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(9999),
           side: BorderSide(
-            color: isSelected ? const Color(0xFF7C3AED) : Colors.white10,
+            color: isSelected ? Colors.transparent : const Color(0xFFE4E4E7),
           ),
         ),
         onSelected: (selected) {
