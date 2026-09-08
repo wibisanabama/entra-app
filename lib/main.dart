@@ -8,6 +8,7 @@ import 'providers/auth_provider.dart';
 import 'providers/event_provider.dart';
 import 'providers/withdrawal_provider.dart';
 import 'router.dart';
+import 'theme/entra_tokens.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +64,8 @@ class _EntraAppState extends State<EntraApp> {
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.light,
         theme: ThemeData(
+          fontFamily: 'Inter',
+          extensions: const [EntraTokens.light],
           useMaterial3: true,
           brightness: Brightness.light,
           colorScheme: ColorScheme.fromSeed(
@@ -164,6 +167,32 @@ class _EntraAppState extends State<EntraApp> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
+          ),
+          navigationBarTheme: NavigationBarThemeData(
+            height: 68,
+            elevation: 0,
+            backgroundColor: Colors.white,
+            indicatorColor: const Color(0xFF09090B),
+            surfaceTintColor: Colors.transparent,
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              return TextStyle(
+                color: states.contains(WidgetState.selected)
+                    ? const Color(0xFF09090B)
+                    : const Color(0xFF71717A),
+                fontSize: 12,
+                fontWeight: states.contains(WidgetState.selected)
+                    ? FontWeight.w700
+                    : FontWeight.w500,
+              );
+            }),
+            iconTheme: WidgetStateProperty.resolveWith((states) {
+              return IconThemeData(
+                color: states.contains(WidgetState.selected)
+                    ? Colors.white
+                    : const Color(0xFF71717A),
+                size: 22,
+              );
+            }),
           ),
         ),
         routerConfig: _router,

@@ -10,6 +10,7 @@ import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/scanner_screen.dart';
 import 'screens/withdrawals_screen.dart';
+import 'widgets/organizer_shell.dart';
 
 GoRouter createRouter(BuildContext context) {
   final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -42,17 +43,36 @@ GoRouter createRouterWithAuth(AuthProvider authProvider) {
         path: '/login',
         builder: (context, state) => const LoginScreen(),
       ),
-      GoRoute(
-        path: '/dashboard',
-        builder: (context, state) => const DashboardScreen(),
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-      GoRoute(
-        path: '/withdrawals',
-        builder: (context, state) => const WithdrawalsScreen(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => OrganizerShell(
+          navigationShell: navigationShell,
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/dashboard',
+                builder: (context, state) => const DashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/withdrawals',
+                builder: (context, state) => const WithdrawalsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: '/events/:id',
@@ -78,4 +98,3 @@ GoRouter createRouterWithAuth(AuthProvider authProvider) {
     ],
   );
 }
-
