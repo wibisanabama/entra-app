@@ -180,7 +180,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: StatCard(
-                        title: 'Total Pendapatan',
+                        title: 'Pendapatan',
                         value: _formatCurrency(stats['total_revenue']),
                         icon: Icons.payments_rounded,
                         iconColor: Colors.greenAccent,
