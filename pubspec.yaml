@@ -64,6 +64,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/fonts/OFL.txt
+    - assets/images/black-logo.png
+    - assets/images/white-logo.png
   fonts:
     - family: Inter
       fonts:
