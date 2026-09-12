@@ -130,40 +130,72 @@ class _EventsScreenState extends State<EventsScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Status Filter Segmented Control (matching entra-web design)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xCCE4E4E7),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildSegmentItem('ALL', 'Semua', allEvents.length),
-                      const SizedBox(width: 2),
-                      _buildSegmentItem(
-                        'PUBLISHED',
-                        'Published',
-                        allEvents.where((e) => e.status.toUpperCase() == 'PUBLISHED').length,
-                      ),
-                      const SizedBox(width: 2),
-                      _buildSegmentItem(
-                        'DRAFT',
-                        'Draft',
-                        allEvents.where((e) => e.status.toUpperCase() == 'DRAFT').length,
-                      ),
-                      const SizedBox(width: 2),
-                      _buildSegmentItem(
-                        'COMPLETED',
-                        'Selesai',
-                        allEvents.where((e) => e.status.toUpperCase() == 'COMPLETED').length,
-                      ),
-                    ],
-                  ),
-                ),
+              // Status Filter Segmented Control (matches search bar width with sliding highlight)
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final totalWidth = constraints.maxWidth;
+                  final innerWidth = totalWidth - 8; // accounts for 4px padding on each side
+                  final tabWidth = innerWidth / 4;
+                  final activeIndex = _getFilterIndex(_selectedStatusFilter);
+
+                  return Container(
+                    width: double.infinity,
+                    height: 40,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xCCE4E4E7),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Stack(
+                      children: [
+                        // Sliding highlight pill
+                        AnimatedPositioned(
+                          duration: const Duration(milliseconds: 250),
+                          curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+                          left: activeIndex * tabWidth,
+                          top: 0,
+                          bottom: 0,
+                          width: tabWidth,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(999),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.06),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Tab labels row
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildSegmentTab('ALL', 'Semua', allEvents.length),
+                            _buildSegmentTab(
+                              'PUBLISHED',
+                              'Published',
+                              allEvents.where((e) => e.status.toUpperCase() == 'PUBLISHED').length,
+                            ),
+                            _buildSegmentTab(
+                              'DRAFT',
+                              'Draft',
+                              allEvents.where((e) => e.status.toUpperCase() == 'DRAFT').length,
+                            ),
+                            _buildSegmentTab(
+                              'COMPLETED',
+                              'Selesai',
+                              allEvents.where((e) => e.status.toUpperCase() == 'COMPLETED').length,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 16),
 
@@ -317,39 +349,47 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  Widget _buildSegmentItem(String filterKey, String label, int count) {
+  int _getFilterIndex(String filter) {
+    switch (filter) {
+      case 'PUBLISHED':
+        return 1;
+      case 'DRAFT':
+        return 2;
+      case 'COMPLETED':
+        return 3;
+      case 'ALL':
+      default:
+        return 0;
+    }
+  }
+
+  Widget _buildSegmentTab(String filterKey, String label, int count) {
     final isSelected = _selectedStatusFilter == filterKey;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        setState(() {
-          _selectedStatusFilter = filterKey;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(999),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : null,
-        ),
-        child: Text(
-          '$label ($count)',
-          style: TextStyle(
-            color: isSelected ? const Color(0xFF09090B) : const Color(0xFF71717A),
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 12,
-            letterSpacing: -0.1,
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (_selectedStatusFilter != filterKey) {
+            setState(() {
+              _selectedStatusFilter = filterKey;
+            });
+          }
+        },
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: TextStyle(
+              color: isSelected ? const Color(0xFF09090B) : const Color(0xFF71717A),
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              letterSpacing: -0.2,
+            ),
+            child: Text(
+              '$label ($count)',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),
