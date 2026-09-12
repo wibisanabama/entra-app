@@ -1,10 +1,8 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiConfig {
-  // Configurable via --dart-define=BACKEND_HOST=... with platform-aware fallback
-  static const String _envHost = String.fromEnvironment('BACKEND_HOST', defaultValue: '');
+  // Configurable via --dart-define=BACKEND_HOST=... Defaults to 'localhost' for USB adb reverse / local dev
+  static const String _envHost = String.fromEnvironment('BACKEND_HOST', defaultValue: 'localhost');
   static String? _customHost;
   static const String _hostPrefKey = 'backend_host_custom';
 
@@ -36,19 +34,7 @@ class ApiConfig {
     if (_customHost != null && _customHost!.isNotEmpty) {
       return _customHost!;
     }
-    if (_envHost.isNotEmpty) {
-      return _envHost;
-    }
-    if (!kIsWeb) {
-      try {
-        if (Platform.isAndroid) {
-          return '10.0.2.2';
-        }
-      } catch (_) {
-        // Fall back to localhost
-      }
-    }
-    return 'localhost';
+    return _envHost;
   }
 
   static String get authBaseUrl => 'http://$host:8081';
