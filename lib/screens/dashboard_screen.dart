@@ -99,56 +99,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_balance_wallet_outlined, size: 22),
-            tooltip: 'Keuangan & Saldo',
-            onPressed: () => context.push('/withdrawals'),
-          ),
-          IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFE4E4E7), width: 1.5),
-              ),
-              child: const Icon(Icons.person_rounded, size: 18, color: Color(0xFF09090B)),
-            ),
-            tooltip: 'Profil & Pengaturan',
-            onPressed: () => context.push('/profile'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Logout',
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Keluar dari Akun?'),
-                  content: const Text('Anda akan keluar dari aplikasi Entra Organizer.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('Batal'),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('Keluar', style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirm == true && context.mounted) {
-                await authProvider.logout();
-                if (context.mounted) {
-                  context.go('/login');
-                }
-              }
-            },
-          ),
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: _loadData,
