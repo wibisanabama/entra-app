@@ -6,6 +6,7 @@ import 'providers/auth_provider.dart';
 import 'screens/attendee_list_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/event_detail_screen.dart';
+import 'screens/events_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/scanner_screen.dart';
@@ -53,6 +54,14 @@ GoRouter createRouterWithAuth(AuthProvider authProvider) {
               GoRoute(
                 path: '/dashboard',
                 builder: (context, state) => const DashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/events',
+                builder: (context, state) => const EventsScreen(),
               ),
             ],
           ),

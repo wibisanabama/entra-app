@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  testWidgets('organizer shell switches between its three primary destinations', (tester) async {
+  testWidgets('organizer shell switches between its four primary destinations', (tester) async {
     final router = GoRouter(
       initialLocation: '/dashboard',
       routes: [
@@ -15,7 +15,12 @@ void main() {
           branches: [
             StatefulShellBranch(
               routes: [
-                GoRoute(path: '/dashboard', builder: (_, _) => const Text('Daftar event')),
+                GoRoute(path: '/dashboard', builder: (_, _) => const Text('Beranda organizer')),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(path: '/events', builder: (_, _) => const Text('Daftar event')),
               ],
             ),
             StatefulShellBranch(
@@ -35,6 +40,10 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    expect(find.text('Beranda organizer'), findsOneWidget);
+
+    await tester.tap(find.text('Event'));
+    await tester.pumpAndSettle();
     expect(find.text('Daftar event'), findsOneWidget);
 
     await tester.tap(find.text('Keuangan'));
