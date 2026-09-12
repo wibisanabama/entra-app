@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../config/api_config.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/entra_logo.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -190,23 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Logo / Icon
-                  Center(
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF4F4F5),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFE4E4E7)),
-                      ),
-                      child: const Icon(
-                        Icons.qr_code_scanner_rounded,
-                        size: 40,
-                        color: Color(0xFF09090B),
-                      ),
-                    ),
-                  ),
+                  const Center(child: EntraLogo(size: 80)),
                   const SizedBox(height: 24),
                   
                   // App Title
