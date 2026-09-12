@@ -14,22 +14,40 @@ class EventsScreen extends StatefulWidget {
   State<EventsScreen> createState() => _EventsScreenState();
 }
 
-class _EventsScreenState extends State<EventsScreen> {
+class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   String _searchQuery = '';
   String _selectedStatusFilter = 'ALL';
+  double _previousBottomInset = 0.0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadEvents();
     });
   }
 
   @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    if (!mounted) return;
+    final bottomInset = View.of(context).viewInsets.bottom;
+    if (_previousBottomInset > 0 && bottomInset == 0) {
+      if (_searchFocusNode.hasFocus) {
+        _searchFocusNode.unfocus();
+      }
+    }
+    _previousBottomInset = bottomInset;
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -79,23 +97,38 @@ class _EventsScreenState extends State<EventsScreen> {
           const SizedBox(width: 4),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadEvents,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Search Bar
-              TextField(
-                controller: _searchController,
-                style: const TextStyle(color: Color(0xFF09090B), fontSize: 13),
-                onChanged: (val) {
-                  setState(() {
-                    _searchQuery = val.trim();
-                  });
-                },
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (_searchFocusNode.hasFocus) {
+            _searchFocusNode.unfocus();
+          }
+        },
+        child: RefreshIndicator(
+          onRefresh: _loadEvents,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Search Bar
+                TextField(
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                  style: const TextStyle(color: Color(0xFF09090B), fontSize: 13),
+                  onTapOutside: (_) {
+                    _searchFocusNode.unfocus();
+                  },
+                  onSubmitted: (_) {
+                    _searchFocusNode.unfocus();
+                  },
+                  onChanged: (val) {
+                    setState(() {
+                      _searchQuery = val.trim();
+                    });
+                  },
                 decoration: InputDecoration(
                   hintText: 'Cari judul, deskripsi, atau lokasi...',
                   hintStyle: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 13),
@@ -361,7 +394,8 @@ class _EventsScreenState extends State<EventsScreen> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   int _getFilterIndex(String filter) {
