@@ -7,6 +7,7 @@ import '../models/event.dart';
 import '../providers/auth_provider.dart';
 import '../providers/event_provider.dart';
 import '../providers/withdrawal_provider.dart';
+import '../widgets/entra_logo.dart';
 import '../widgets/event_card.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/withdrawal_bottom_sheet.dart';
@@ -90,18 +91,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF4F4F5),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.qr_code_scanner_rounded,
-                color: Color(0xFF09090B),
-                size: 18,
-              ),
-            ),
+            const EntraLogo(size: 26),
             const SizedBox(width: 10),
             const Text(
               'Entra',
