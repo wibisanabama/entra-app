@@ -124,7 +124,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                    borderSide: BorderSide.none,
                   ),
                 ),
               ),
