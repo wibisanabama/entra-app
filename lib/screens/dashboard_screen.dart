@@ -141,10 +141,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               // Stats Section
               StatCard(
-                title: 'Total Event',
-                value: '${allEvents.length} Event',
-                icon: Icons.event_rounded,
-                iconColor: const Color(0xFF7C3AED),
+                title: 'Pendapatan',
+                value: _formatCurrency(stats['total_revenue']),
+                icon: Icons.payments_rounded,
+                iconColor: Colors.greenAccent,
               ),
               const SizedBox(height: 8),
               IntrinsicHeight(
@@ -162,10 +162,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: StatCard(
-                        title: 'Pendapatan',
-                        value: _formatCurrency(stats['total_revenue']),
-                        icon: Icons.payments_rounded,
-                        iconColor: Colors.greenAccent,
+                        title: 'Total Event',
+                        value: '${allEvents.length} Event',
+                        icon: Icons.event_rounded,
+                        iconColor: const Color(0xFF7C3AED),
                       ),
                     ),
                   ],
