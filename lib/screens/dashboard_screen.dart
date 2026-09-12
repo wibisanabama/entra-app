@@ -10,7 +10,6 @@ import '../providers/withdrawal_provider.dart';
 import '../widgets/entra_logo.dart';
 import '../widgets/event_card.dart';
 import '../widgets/stat_card.dart';
-import '../widgets/withdrawal_bottom_sheet.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -129,50 +128,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFE4E4E7), width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  color: const Color(0xFFF4F4F5),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'SALDO TERSEDIA',
-                          style: TextStyle(
-                            color: Color(0xFF71717A),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => context.push('/withdrawals'),
-                          borderRadius: BorderRadius.circular(999),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Kelola',
-                                  style: TextStyle(color: Color(0xFF09090B), fontSize: 12, fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(width: 2),
-                                Icon(Icons.chevron_right_rounded, color: Color(0xFF09090B), size: 16),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                    const Text(
+                      'Saldo Tersedia',
+                      style: TextStyle(
+                        color: Color(0xFF71717A),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -183,46 +151,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: Color(0xFF09090B),
                         letterSpacing: -0.5,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.arrow_outward_rounded, size: 16),
-                            label: const Text('Tarik Dana', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF09090B),
-                              foregroundColor: Colors.white,
-                              shape: const StadiumBorder(),
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                            onPressed: balance.availableBalance >= 10000
-                                ? () async {
-                                    final res = await WithdrawalBottomSheet.show(
-                                      context,
-                                      balance.availableBalance,
-                                    );
-                                    if (res == true) {
-                                      _loadData();
-                                    }
-                                  }
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF09090B),
-                            side: const BorderSide(color: Color(0xFFE4E4E7)),
-                            shape: const StadiumBorder(),
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                          ),
-                          onPressed: () => context.push('/withdrawals'),
-                          child: const Text('Riwayat', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                        ),
-                      ],
                     ),
                   ],
                 ),
