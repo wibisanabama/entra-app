@@ -162,8 +162,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: StatCard(
-                        title: 'Total Event',
-                        value: '${allEvents.length} Event',
+                        title: 'Event Aktif',
+                        value: '${allEvents.where((e) => e.status.toUpperCase() == 'PUBLISHED').length}',
                         icon: Icons.event_rounded,
                         iconColor: const Color(0xFF7C3AED),
                       ),
