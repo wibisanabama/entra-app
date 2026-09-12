@@ -130,19 +130,39 @@ class _EventsScreenState extends State<EventsScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Status Filter Chips
+              // Status Filter Segmented Control (matching entra-web design)
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _buildFilterChip('ALL', 'Semua Event', allEvents.length),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('PUBLISHED', 'Published', allEvents.where((e) => e.status.toUpperCase() == 'PUBLISHED').length),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('DRAFT', 'Draft', allEvents.where((e) => e.status.toUpperCase() == 'DRAFT').length),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('COMPLETED', 'Selesai', allEvents.where((e) => e.status.toUpperCase() == 'COMPLETED').length),
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xCCE4E4E7),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildSegmentItem('ALL', 'Semua', allEvents.length),
+                      const SizedBox(width: 2),
+                      _buildSegmentItem(
+                        'PUBLISHED',
+                        'Published',
+                        allEvents.where((e) => e.status.toUpperCase() == 'PUBLISHED').length,
+                      ),
+                      const SizedBox(width: 2),
+                      _buildSegmentItem(
+                        'DRAFT',
+                        'Draft',
+                        allEvents.where((e) => e.status.toUpperCase() == 'DRAFT').length,
+                      ),
+                      const SizedBox(width: 2),
+                      _buildSegmentItem(
+                        'COMPLETED',
+                        'Selesai',
+                        allEvents.where((e) => e.status.toUpperCase() == 'COMPLETED').length,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -297,31 +317,42 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  Widget _buildFilterChip(String filterKey, String label, int count) {
+  Widget _buildSegmentItem(String filterKey, String label, int count) {
     final isSelected = _selectedStatusFilter == filterKey;
-    return ChoiceChip(
-      label: Text('$label ($count)'),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          setState(() {
-            _selectedStatusFilter = filterKey;
-          });
-        }
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        setState(() {
+          _selectedStatusFilter = filterKey;
+        });
       },
-      selectedColor: const Color(0xFF09090B),
-      backgroundColor: Colors.white,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : const Color(0xFF71717A),
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-        fontSize: 12,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          '$label ($count)',
+          style: TextStyle(
+            color: isSelected ? const Color(0xFF09090B) : const Color(0xFF71717A),
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            fontSize: 12,
+            letterSpacing: -0.1,
+          ),
+        ),
       ),
-      side: BorderSide(
-        color: isSelected ? const Color(0xFF09090B) : const Color(0xFFE4E4E7),
-        width: 1,
-      ),
-      shape: const StadiumBorder(),
-      showCheckmark: false,
     );
   }
 }
