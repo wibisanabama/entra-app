@@ -41,11 +41,6 @@ class OrganizerShell extends StatelessWidget {
               selectedIcon: Icon(Icons.account_balance_wallet_rounded),
               label: 'Keuangan',
             ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded),
-              selectedIcon: Icon(Icons.person_rounded),
-              label: 'Profil',
-            ),
           ],
         ),
       ),

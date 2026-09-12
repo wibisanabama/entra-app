@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -70,6 +70,14 @@ class _EventsScreenState extends State<EventsScreen> {
           'Daftar Event',
           style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline_rounded, color: Color(0xFF09090B), size: 22),
+            tooltip: 'Profil',
+            onPressed: () => context.push('/profile'),
+          ),
+          const SizedBox(width: 4),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _loadEvents,

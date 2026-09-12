@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  testWidgets('organizer shell switches between its four primary destinations', (tester) async {
+  testWidgets('organizer shell switches between its three primary destinations', (tester) async {
     final router = GoRouter(
       initialLocation: '/dashboard',
       routes: [
@@ -28,11 +28,6 @@ void main() {
                 GoRoute(path: '/withdrawals', builder: (_, _) => const Text('Saldo organizer')),
               ],
             ),
-            StatefulShellBranch(
-              routes: [
-                GoRoute(path: '/profile', builder: (_, _) => const Text('Profil organizer')),
-              ],
-            ),
           ],
         ),
       ],
@@ -49,9 +44,5 @@ void main() {
     await tester.tap(find.text('Keuangan'));
     await tester.pumpAndSettle();
     expect(find.text('Saldo organizer'), findsOneWidget);
-
-    await tester.tap(find.text('Profil'));
-    await tester.pumpAndSettle();
-    expect(find.text('Profil organizer'), findsOneWidget);
   });
 }
