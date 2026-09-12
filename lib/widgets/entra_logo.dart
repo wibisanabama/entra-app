@@ -1,44 +1,48 @@
 import 'package:flutter/material.dart';
 
 class EntraLogo extends StatelessWidget {
-  const EntraLogo({super.key, this.size = 64});
+  const EntraLogo({
+    super.key,
+    this.size = 64,
+    this.backgroundColor = Colors.white,
+    this.borderRadius,
+    this.padding,
+    this.withBorder = true,
+  });
 
   final double size;
+  final Color backgroundColor;
+  final BorderRadius? borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final bool withBorder;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    final effectiveRadius = borderRadius ?? BorderRadius.circular(size * 0.22);
+    final effectivePadding = padding ?? EdgeInsets.all(size * 0.16);
+
+    return Container(
       width: size,
       height: size,
-      child: CustomPaint(painter: _EntraLogoPainter()),
+      padding: effectivePadding,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: effectiveRadius,
+        border: withBorder
+            ? Border.all(color: const Color(0xFFE4E4E7), width: 1.5)
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Image.asset(
+        'assets/images/black-logo.png',
+        fit: BoxFit.contain,
+      ),
     );
   }
-}
-
-class _EntraLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final mark = Paint()..color = const Color(0xFF09090B);
-    final whiteLine = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = size.width * 0.109375;
-
-    final radius = Radius.circular(size.width * 0.25);
-    canvas.drawRRect(RRect.fromRectAndRadius(Offset.zero & size, radius), mark);
-
-    Path line(double x1, double y1, double x2, double y2) => Path()
-      ..moveTo(size.width * x1, size.height * y1)
-      ..lineTo(size.width * x2, size.height * y2);
-
-    canvas.drawPath(line(.328125, .28125, .328125, .71875), whiteLine);
-    canvas.drawPath(line(.375, .28125, .71875, .28125), whiteLine);
-    canvas.drawPath(line(.375, .5, .625, .5), whiteLine);
-    canvas.drawPath(line(.375, .71875, .71875, .71875), whiteLine);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
