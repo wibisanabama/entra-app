@@ -108,6 +108,23 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: event.isPublished ? const Color(0xFFECFDF5) : const Color(0xFFFFFBEB),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        event.status.toUpperCase(),
+                        style: TextStyle(
+                          color: event.isPublished ? const Color(0xFF059669) : const Color(0xFFD97706),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     Text(
                       event.title,
                       style: const TextStyle(
