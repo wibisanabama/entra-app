@@ -113,17 +113,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: 'Email Organizer',
                       prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF71717A), size: 20),
+                      filled: true,
+                      fillColor: const Color(0xFFF4F4F5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                        borderSide: BorderSide.none,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                        borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     validator: (value) {
@@ -158,17 +160,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                         },
                       ),
+                      filled: true,
+                      fillColor: const Color(0xFFF4F4F5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                        borderSide: BorderSide.none,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                        borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                     validator: (value) {
