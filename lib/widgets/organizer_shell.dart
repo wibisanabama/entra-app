@@ -29,7 +29,7 @@ class OrganizerShell extends StatelessWidget {
             NavigationDestination(
               icon: Icon(Icons.dashboard_outlined),
               selectedIcon: Icon(Icons.dashboard_rounded),
-              label: 'Beranda',
+              label: 'Dashboard',
             ),
             NavigationDestination(
               icon: Icon(Icons.event_outlined),

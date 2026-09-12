@@ -15,7 +15,7 @@ void main() {
           branches: [
             StatefulShellBranch(
               routes: [
-                GoRoute(path: '/dashboard', builder: (_, _) => const Text('Beranda organizer')),
+                GoRoute(path: '/dashboard', builder: (_, _) => const Text('Dashboard organizer')),
               ],
             ),
             StatefulShellBranch(
@@ -35,7 +35,7 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-    expect(find.text('Beranda organizer'), findsOneWidget);
+    expect(find.text('Dashboard organizer'), findsOneWidget);
 
     await tester.tap(find.text('Event'));
     await tester.pumpAndSettle();
