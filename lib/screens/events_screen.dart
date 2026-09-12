@@ -312,7 +312,7 @@ class _EventsScreenState extends State<EventsScreen> {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             _searchController.clear();
                             setState(() {
@@ -320,8 +320,23 @@ class _EventsScreenState extends State<EventsScreen> {
                               _selectedStatusFilter = 'ALL';
                             });
                           },
-                          icon: const Icon(Icons.refresh_rounded, size: 16),
-                          label: const Text('Reset Filter'),
+                          icon: const Icon(Icons.refresh_rounded, size: 16, color: Color(0xFF09090B)),
+                          label: const Text(
+                            'Reset Filter',
+                            style: TextStyle(
+                              color: Color(0xFF09090B),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF4F4F5),
+                            foregroundColor: const Color(0xFF09090B),
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          ),
                         ),
                       ],
                     ),
