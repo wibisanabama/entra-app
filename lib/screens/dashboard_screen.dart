@@ -141,7 +141,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               // Stats Section
               StatCard(
-                title: 'Pendapatan',
+                title: 'Total Pendapatan',
                 value: _formatCurrency(stats['total_revenue']),
                 icon: Icons.payments_rounded,
                 iconColor: Colors.greenAccent,
