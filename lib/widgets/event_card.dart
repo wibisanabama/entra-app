@@ -19,9 +19,8 @@ class EventCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF4F4F5),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE4E4E7), width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -43,12 +42,6 @@ class EventCard extends StatelessWidget {
                             ? const Color(0xFFECFDF5)
                             : const Color(0xFFFFFBEB),
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: isPublished
-                              ? const Color(0xFFA7F3D0)
-                              : const Color(0xFFFDE68A),
-                          width: 0.8,
-                        ),
                       ),
                       child: Text(
                         isPublished ? 'PUBLISHED' : 'DRAFT',
