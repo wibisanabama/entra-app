@@ -478,9 +478,16 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
     return Scaffold(
       backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
         title: const Text(
           'Scan QR Tiket',
           style: TextStyle(
@@ -543,7 +550,7 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
           // Live Gate Attendance Overlay Banner (Top - Mobbin Floating Card)
           Positioned(
-            top: 10,
+            top: MediaQuery.of(context).padding.top + kToolbarHeight + 10,
             left: 16,
             right: 16,
             child: Container(
