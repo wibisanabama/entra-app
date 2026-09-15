@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/gate_stats.dart';
 import '../utils/qr_normalizer.dart';
-import 'auth_service.dart';
+import 'api_client.dart';
 
 enum ScanStatus { success, alreadyUsed, invalid, serverError }
 
@@ -24,25 +24,23 @@ class ScanResult {
 }
 
 class GateService {
+  final ApiClient _apiClient;
+
+  GateService({ApiClient? apiClient, http.Client? httpClient})
+      : _apiClient = apiClient ?? (httpClient != null ? ApiClient(httpClient: httpClient) : ApiClient.instance);
+
   Future<ScanResult> scanTicket(String rawTicketCode, String token, {String? eventId}) async {
     final ticketCode = QrNormalizer.normalize(rawTicketCode);
     final url = Uri.parse('${ApiConfig.gateBaseUrl}/api/v1/gate/scan');
     try {
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        token: token,
         body: jsonEncode({
           'ticket_code': ticketCode,
           if (eventId != null && eventId.isNotEmpty) 'event_id': eventId,
         }),
       );
-
-      if (response.statusCode == 401) {
-        AuthService.broadcastSessionExpired();
-      }
 
       final data = jsonDecode(response.body);
       final payload = data['data'] is Map<String, dynamic> ? data['data'] as Map<String, dynamic> : null;

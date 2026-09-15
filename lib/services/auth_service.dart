@@ -11,14 +11,26 @@ class AuthService {
 
   static final StreamController<void> _sessionExpiredController =
       StreamController<void>.broadcast();
+  static final StreamController<String> _tokenRefreshedController =
+      StreamController<String>.broadcast();
 
   /// Stream that emits whenever a 401 Unauthorized occurs across API services.
   static Stream<void> get onSessionExpired => _sessionExpiredController.stream;
+
+  /// Stream that emits whenever a token is successfully refreshed in the background.
+  static Stream<String> get onTokenRefreshed => _tokenRefreshedController.stream;
 
   /// Broadcasts a session expiration event to redirect the user to the login screen.
   static void broadcastSessionExpired() {
     if (!_sessionExpiredController.isClosed) {
       _sessionExpiredController.add(null);
+    }
+  }
+
+  /// Broadcasts a new access token to update application state in real-time.
+  static void notifyTokenRefreshed(String newToken) {
+    if (!_tokenRefreshedController.isClosed) {
+      _tokenRefreshedController.add(newToken);
     }
   }
 
@@ -140,6 +152,7 @@ class AuthService {
                 ? newRefreshToken
                 : storedRefreshToken,
           );
+          notifyTokenRefreshed(newAccessToken);
           return {
             'success': true,
             'token': newAccessToken,

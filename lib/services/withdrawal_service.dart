@@ -1,21 +1,18 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/balance.dart';
 import '../models/withdrawal.dart';
-import 'auth_service.dart';
+import 'api_client.dart';
 
 class WithdrawalService {
+  final ApiClient _apiClient;
+
+  WithdrawalService({ApiClient? apiClient}) : _apiClient = apiClient ?? ApiClient.instance;
+
   Future<OrganizerBalance> getOrganizerBalance(String token) async {
     try {
       final url = Uri.parse('${ApiConfig.ticketBaseUrl}/api/v1/tickets/organizer/balance');
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await _apiClient.get(url, token: token);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -24,7 +21,6 @@ class WithdrawalService {
         }
         return OrganizerBalance.empty();
       } else if (response.statusCode == 401) {
-        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         throw Exception('Gagal memuat informasi saldo organizer.');
@@ -38,20 +34,13 @@ class WithdrawalService {
   Future<List<Withdrawal>> getOrganizerWithdrawals(String token, {int page = 1, int perPage = 20}) async {
     try {
       final url = Uri.parse('${ApiConfig.ticketBaseUrl}/api/v1/tickets/organizer/withdrawals?page=$page&per_page=$perPage');
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await _apiClient.get(url, token: token);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List list = data['data'] ?? [];
         return list.map((item) => Withdrawal.fromJson(item)).toList();
       } else if (response.statusCode == 401) {
-        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         throw Exception('Gagal memuat riwayat penarikan dana.');
@@ -72,12 +61,9 @@ class WithdrawalService {
   }) async {
     try {
       final url = Uri.parse('${ApiConfig.ticketBaseUrl}/api/v1/tickets/organizer/withdrawals');
-      final response = await http.post(
+      final response = await _apiClient.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        token: token,
         body: jsonEncode({
           'amount': amount,
           'bank_name': bankName,
@@ -92,7 +78,6 @@ class WithdrawalService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         return Withdrawal.fromJson(data['data']);
       } else if (response.statusCode == 401) {
-        AuthService.broadcastSessionExpired();
         throw Exception('Sesi login telah berakhir. Silakan keluar dan login kembali.');
       } else {
         final msg = data['message'] ?? 'Gagal mengajukan penarikan dana.';
@@ -104,4 +89,5 @@ class WithdrawalService {
     }
   }
 }
+
 

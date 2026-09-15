@@ -6,6 +6,7 @@ import '../services/auth_service.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
   StreamSubscription<void>? _sessionExpiredSubscription;
+  StreamSubscription<String>? _tokenRefreshedSubscription;
   bool _disposed = false;
 
   User? _user;
@@ -24,6 +25,12 @@ class AuthProvider extends ChangeNotifier {
     _sessionExpiredSubscription = AuthService.onSessionExpired.listen((_) {
       handleSessionExpired();
     });
+    _tokenRefreshedSubscription = AuthService.onTokenRefreshed.listen((newToken) {
+      if (_token != newToken) {
+        _token = newToken;
+        notifyListeners();
+      }
+    });
     Future.microtask(() => initAuth());
   }
 
@@ -31,6 +38,7 @@ class AuthProvider extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _sessionExpiredSubscription?.cancel();
+    _tokenRefreshedSubscription?.cancel();
     super.dispose();
   }
 
