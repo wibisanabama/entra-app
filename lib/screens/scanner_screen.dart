@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
-import '../models/gate_stats.dart';
 import '../providers/auth_provider.dart';
 import '../services/gate_service.dart';
 import '../utils/qr_normalizer.dart';
@@ -31,18 +30,15 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
   final GateService _gateService = GateService();
   bool _isProcessing = false;
-  GateStats? _gateStats;
 
   // Scan Result Banner
   ScanResult? _rapidResult;
   Timer? _rapidResetTimer;
 
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadGateStats();
   }
 
   @override
@@ -60,16 +56,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
       _controller.stop();
     } else if (state == AppLifecycleState.resumed) {
       _controller.start();
-    }
-  }
-
-  Future<void> _loadGateStats() async {
-    if (!mounted) return;
-    final stats = await _gateService.getGateStats(widget.eventId);
-    if (mounted) {
-      setState(() {
-        _gateStats = stats;
-      });
     }
   }
 
@@ -115,10 +101,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
     setState(() {
       _rapidResult = result;
     });
-
-    if (result.status == ScanStatus.success) {
-      _loadGateStats();
-    }
 
     _rapidResetTimer?.cancel();
     _rapidResetTimer = Timer(const Duration(milliseconds: 1400), () {
@@ -225,7 +207,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
-    final stats = _gateStats;
     final rapid = _rapidResult;
 
     return Scaffold(
@@ -257,142 +238,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
           MobileScanner(
             controller: _controller,
             onDetect: _onDetect,
-          ),
-
-          // Live Gate Attendance Overlay Banner (Top - Mobbin Floating Card)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + kToolbarHeight + 10,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.96),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: const Color(0xFFE4E4E7),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF10B981),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'LIVE CHECK-IN',
-                            style: TextStyle(
-                              color: Color(0xFF09090B),
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (stats != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFECFDF5),
-                            borderRadius: BorderRadius.circular(9999),
-                            border: Border.all(color: const Color(0xFFA7F3D0)),
-                          ),
-                          child: Text(
-                            '${stats.checkinRate.toStringAsFixed(1)}% Hadir',
-                            style: const TextStyle(
-                              color: Color(0xFF059669),
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      else
-                        const Text(
-                          'Memuat...',
-                          style: TextStyle(color: Color(0xFF71717A), fontSize: 11),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            stats != null ? '${stats.checkedIn} / ${stats.totalTickets}' : '- / -',
-                            style: const TextStyle(
-                              color: Color(0xFF09090B),
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              fontFamily: 'monospace',
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const Text(
-                            'Total Sudah Check-In',
-                            style: TextStyle(color: Color(0xFF71717A), fontSize: 11),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            stats != null ? '${stats.remaining}' : '-',
-                            style: const TextStyle(
-                              color: Color(0xFFD97706),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'monospace',
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const Text(
-                            'Sisa Belum Masuk',
-                            style: TextStyle(color: Color(0xFF71717A), fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  if (stats != null && stats.totalTickets > 0) ...[
-                    const SizedBox(height: 10),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(9999),
-                      child: LinearProgressIndicator(
-                        value: (stats.checkedIn / stats.totalTickets).clamp(0.0, 1.0),
-                        backgroundColor: const Color(0xFFF4F4F5),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF09090B)),
-                        minHeight: 5,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
           ),
 
           // Viewfinder Overlay Frame (Mobbin Rounded 28)
