@@ -415,7 +415,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 tier.price > 0
                                     ? 'Harga: ${_formatCurrency(tier.price)}'
                                     : 'Gratis',
-                                style: const TextStyle(color: Color(0xFF09090B), fontSize: 12, fontWeight: FontWeight.w600),
+                                style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
                               ),
                             ],
                           ),
