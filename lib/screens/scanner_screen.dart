@@ -17,7 +17,6 @@ class RecentScanItem {
   final String? attendeeName;
   final String? ticketType;
   final DateTime timestamp;
-  final String gateName;
 
   RecentScanItem({
     required this.ticketCode,
@@ -26,7 +25,6 @@ class RecentScanItem {
     this.attendeeName,
     this.ticketType,
     required this.timestamp,
-    required this.gateName,
   });
 }
 
@@ -53,17 +51,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
   bool _isProcessing = false;
   bool _torchEnabled = false;
   GateStats? _gateStats;
-
-  // Gate & Lane Selection
-  String _selectedGate = 'Gate Utama';
-  final List<String> _availableGates = [
-    'Gate Utama',
-    'Gate A (VIP)',
-    'Gate B (Reguler)',
-    'Pintu Barat',
-    'Pintu Timur',
-    'Gate Festival',
-  ];
 
   // Rapid Scan Mode
   bool _rapidMode = true;
@@ -164,7 +151,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
       attendeeName: result.attendeeName,
       ticketType: result.ticketTypeName,
       timestamp: DateTime.now(),
-      gateName: _selectedGate,
     );
 
     if (mounted) {
@@ -217,104 +203,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
         ),
       );
     }
-  }
-
-  void _showGateSelectorDialog() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE4E4E7),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Row(
-                children: [
-                  Icon(Icons.door_sliding_outlined, color: Color(0xFF09090B)),
-                  SizedBox(width: 8),
-                  Text(
-                    'Pilih Pos / Gate Masuk',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF09090B),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Tandai pintu tempat Anda bertugas untuk atribusi verifikasi tiket.',
-                style: TextStyle(fontSize: 13, color: Color(0xFF71717A)),
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: _availableGates.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 6),
-                  itemBuilder: (ctx, index) {
-                    final gate = _availableGates[index];
-                    final isSelected = gate == _selectedGate;
-                    return ListTile(
-                      dense: true,
-                      leading: Icon(
-                        isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
-                        color: isSelected ? const Color(0xFF09090B) : const Color(0xFFA1A1AA),
-                      ),
-                      title: Text(
-                        gate,
-                        style: TextStyle(
-                          color: isSelected ? const Color(0xFF09090B) : const Color(0xFF71717A),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      tileColor: isSelected
-                          ? const Color(0xFFF4F4F5)
-                          : Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(
-                          color: isSelected ? const Color(0xFFE4E4E7) : Colors.transparent,
-                        ),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _selectedGate = gate;
-                        });
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Gate diubah ke: $gate'),
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   void _showRecentScansBottomSheet() {
@@ -455,7 +343,7 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      '${item.gateName} • ${item.ticketType ?? 'Tiket'} • ${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}:${item.timestamp.second.toString().padLeft(2, '0')}',
+                                      '${item.ticketType ?? 'Tiket'} • ${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}:${item.timestamp.second.toString().padLeft(2, '0')}',
                                       style: const TextStyle(color: Color(0xFF71717A), fontSize: 11),
                                     ),
                                   ],
@@ -593,31 +481,14 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Scan QR Tiket',
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            InkWell(
-              onTap: _showGateSelectorDialog,
-              borderRadius: BorderRadius.circular(9999),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _selectedGate,
-                      style: const TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.w600),
-                    ),
-                    const Icon(Icons.arrow_drop_down, color: Color(0xFF10B981), size: 16),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        title: const Text(
+          'Scan QR Tiket',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.3,
+          ),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
@@ -709,9 +580,9 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            'LIVE • $_selectedGate',
-                            style: const TextStyle(
+                          const Text(
+                            'LIVE CHECK-IN',
+                            style: TextStyle(
                               color: Color(0xFF09090B),
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
