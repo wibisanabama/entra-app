@@ -9,23 +9,6 @@ import '../providers/auth_provider.dart';
 import '../services/gate_service.dart';
 import '../utils/qr_normalizer.dart';
 
-class RecentScanItem {
-  final String ticketCode;
-  final ScanStatus status;
-  final String message;
-  final String? attendeeName;
-  final String? ticketType;
-  final DateTime timestamp;
-
-  RecentScanItem({
-    required this.ticketCode,
-    required this.status,
-    required this.message,
-    this.attendeeName,
-    this.ticketType,
-    required this.timestamp,
-  });
-}
 
 class ScannerScreen extends StatefulWidget {
   final String eventId;
@@ -54,8 +37,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
   ScanResult? _rapidResult;
   Timer? _rapidResetTimer;
 
-  // Recent Scans History
-  final List<RecentScanItem> _recentScans = [];
 
   @override
   void initState() {
@@ -128,25 +109,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
       HapticFeedback.vibrate();
     }
 
-    // Add to Recent Scans
-    final recentItem = RecentScanItem(
-      ticketCode: ticketCode,
-      status: result.status,
-      message: result.message,
-      attendeeName: result.attendeeName,
-      ticketType: result.ticketTypeName,
-      timestamp: DateTime.now(),
-    );
-
-    if (mounted) {
-      setState(() {
-        _recentScans.insert(0, recentItem);
-        if (_recentScans.length > 30) {
-          _recentScans.removeLast();
-        }
-      });
-    }
-
     if (!mounted) return;
 
     // Show floating result banner without blocking modal dialog
@@ -167,180 +129,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
         });
       }
     });
-  }
-
-  void _showRecentScansBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.65,
-        maxChildSize: 0.9,
-        minChildSize: 0.4,
-        expand: false,
-        builder: (_, scrollController) => Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE4E4E7),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.history_rounded, color: Color(0xFF09090B)),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Riwayat Scan Sesi Ini',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF09090B),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF4F4F5),
-                          borderRadius: BorderRadius.circular(9999),
-                          border: Border.all(color: const Color(0xFFE4E4E7)),
-                        ),
-                        child: Text(
-                          '${_recentScans.length}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF09090B),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Tutup', style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: _recentScans.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'Belum ada tiket yang dipindai pada sesi ini.',
-                        style: TextStyle(color: Color(0xFF71717A), fontSize: 13),
-                      ),
-                    )
-                  : ListView.separated(
-                      controller: scrollController,
-                      itemCount: _recentScans.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 8),
-                      itemBuilder: (ctx, index) {
-                        final item = _recentScans[index];
-                        final isSuccess = item.status == ScanStatus.success;
-                        final isDuplicate = item.status == ScanStatus.alreadyUsed;
-
-                        final statusBg = isSuccess
-                            ? const Color(0xFFECFDF5)
-                            : (isDuplicate ? const Color(0xFFFFFBEB) : const Color(0xFFFEF2F2));
-                        final statusText = isSuccess
-                            ? const Color(0xFF059669)
-                            : (isDuplicate ? const Color(0xFFD97706) : const Color(0xFFDC2626));
-                        final statusBorder = isSuccess
-                            ? const Color(0xFFA7F3D0)
-                            : (isDuplicate ? const Color(0xFFFDE68A) : const Color(0xFFFECACA));
-
-                        return Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xFFE4E4E7)),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: statusBg,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  isSuccess
-                                      ? Icons.check_circle_rounded
-                                      : isDuplicate
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.cancel_rounded,
-                                  color: statusText,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.attendeeName ?? item.ticketCode,
-                                      style: const TextStyle(
-                                        color: Color(0xFF09090B),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '${item.ticketType ?? 'Tiket'} • ${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}:${item.timestamp.second.toString().padLeft(2, '0')}',
-                                      style: const TextStyle(color: Color(0xFF71717A), fontSize: 11),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: statusBg,
-                                  borderRadius: BorderRadius.circular(9999),
-                                  border: Border.all(color: statusBorder),
-                                ),
-                                child: Text(
-                                  isSuccess ? 'VALID' : isDuplicate ? 'DUPLIKAT' : 'INVALID',
-                                  style: TextStyle(
-                                    color: statusText,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   void _showManualInputDialog() {
@@ -462,13 +250,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            onPressed: _showRecentScansBottomSheet,
-            icon: const Icon(Icons.history_rounded, color: Colors.white),
-            tooltip: 'Riwayat Scan',
-          ),
-        ],
       ),
       body: Stack(
         children: [
