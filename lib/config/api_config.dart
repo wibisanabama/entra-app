@@ -41,5 +41,17 @@ class ApiConfig {
   static String get eventBaseUrl => 'http://$host:8082';
   static String get ticketBaseUrl => 'http://$host:8083';
   static String get gateBaseUrl => 'http://$host:8086';
+
+  /// Format URL media/gambar agar sesuai dengan host yang sedang aktif
+  static String resolveMediaUrl(String? url) {
+    if (url == null || url.trim().isEmpty) return '';
+    final trimmed = url.trim();
+    if (trimmed.startsWith('http://localhost:') || trimmed.startsWith('http://127.0.0.1:')) {
+      return trimmed
+          .replaceFirst('http://localhost:', 'http://$host:')
+          .replaceFirst('http://127.0.0.1:', 'http://$host:');
+    }
+    return trimmed;
+  }
 }
 

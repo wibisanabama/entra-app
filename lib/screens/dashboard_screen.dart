@@ -8,6 +8,7 @@ import '../providers/event_provider.dart';
 import '../providers/withdrawal_provider.dart';
 import '../widgets/entra_logo.dart';
 import '../widgets/stat_card.dart';
+import '../widgets/user_avatar.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -71,12 +72,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline_rounded, color: Color(0xFF09090B), size: 22),
-            tooltip: 'Profil',
-            onPressed: () => context.push('/profile'),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: UserAvatar(
+                avatarUrl: authProvider.user?.avatarUrl,
+                name: authProvider.user?.name ?? '',
+                size: 34,
+                onTap: () => context.push('/profile'),
+              ),
+            ),
           ),
-          const SizedBox(width: 4),
         ],
       ),
       body: RefreshIndicator(
