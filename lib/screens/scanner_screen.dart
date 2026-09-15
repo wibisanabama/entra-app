@@ -8,7 +8,6 @@ import '../models/gate_stats.dart';
 import '../providers/auth_provider.dart';
 import '../services/gate_service.dart';
 import '../utils/qr_normalizer.dart';
-import '../widgets/scan_result_dialog.dart';
 
 class RecentScanItem {
   final String ticketCode;
@@ -49,11 +48,9 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
   final GateService _gateService = GateService();
   bool _isProcessing = false;
-  bool _torchEnabled = false;
   GateStats? _gateStats;
 
-  // Rapid Scan Mode
-  bool _rapidMode = true;
+  // Scan Result Banner
   ScanResult? _rapidResult;
   Timer? _rapidResetTimer;
 
@@ -93,14 +90,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
         _gateStats = stats;
       });
     }
-  }
-
-  void _toggleTorch() async {
-    await _controller.toggleTorch();
-    if (!mounted) return;
-    setState(() {
-      _torchEnabled = !_torchEnabled;
-    });
   }
 
   void _switchCamera() async {
@@ -164,45 +153,24 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 
     if (!mounted) return;
 
-    if (_rapidMode) {
-      // Rapid Mode: Show floating flash banner without blocking modal dialog
-      setState(() {
-        _rapidResult = result;
-      });
+    // Show floating result banner without blocking modal dialog
+    setState(() {
+      _rapidResult = result;
+    });
 
-      if (result.status == ScanStatus.success) {
-        _loadGateStats();
-      }
-
-      _rapidResetTimer?.cancel();
-      _rapidResetTimer = Timer(const Duration(milliseconds: 1400), () {
-        if (mounted) {
-          setState(() {
-            _rapidResult = null;
-            _isProcessing = false;
-          });
-        }
-      });
-    } else {
-      // Modal Dialog Mode: Stop camera and show dialog
-      _controller.stop();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => ScanResultDialog(
-          result: result,
-          onDismiss: () {
-            setState(() {
-              _isProcessing = false;
-            });
-            _controller.start();
-            if (result.status == ScanStatus.success) {
-              _loadGateStats();
-            }
-          },
-        ),
-      );
+    if (result.status == ScanStatus.success) {
+      _loadGateStats();
     }
+
+    _rapidResetTimer?.cancel();
+    _rapidResetTimer = Timer(const Duration(milliseconds: 1400), () {
+      if (mounted) {
+        setState(() {
+          _rapidResult = null;
+          _isProcessing = false;
+        });
+      }
+    });
   }
 
   void _showRecentScansBottomSheet() {
@@ -499,39 +467,10 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-          // Rapid Mode Toggle
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _rapidMode = !_rapidMode;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    _rapidMode ? 'Mode Kilat Aktif (Auto-Dismiss)' : 'Mode Dialog Interaktif Aktif',
-                  ),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
-            },
-            icon: Icon(
-              _rapidMode ? Icons.bolt_rounded : Icons.splitscreen_rounded,
-              color: _rapidMode ? Colors.amberAccent : Colors.white70,
-            ),
-            tooltip: _rapidMode ? 'Mode Kilat Aktif' : 'Mode Dialog',
-          ),
           IconButton(
             onPressed: _showRecentScansBottomSheet,
             icon: const Icon(Icons.history_rounded, color: Colors.white),
             tooltip: 'Riwayat Scan',
-          ),
-          IconButton(
-            onPressed: _toggleTorch,
-            icon: Icon(
-              _torchEnabled ? Icons.flash_on_rounded : Icons.flash_off_rounded,
-              color: _torchEnabled ? Colors.amberAccent : Colors.white,
-            ),
-            tooltip: 'Senter Kamera',
           ),
           IconButton(
             onPressed: _switchCamera,
@@ -823,18 +762,16 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
                           child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF09090B)),
                         )
                       else
-                        Icon(
-                          _rapidMode ? Icons.bolt_rounded : Icons.center_focus_strong_rounded,
-                          color: const Color(0xFF09090B),
+                        const Icon(
+                          Icons.center_focus_strong_rounded,
+                          color: Color(0xFF09090B),
                           size: 16,
                         ),
                       const SizedBox(width: 8),
                       Text(
                         _isProcessing
                             ? 'Memverifikasi...'
-                            : _rapidMode
-                                ? 'Mode Kilat: Scan Berkelanjutan'
-                                : 'Arahkan kamera ke QR Code tiket',
+                            : 'Arahkan kamera ke QR Code tiket',
                         style: const TextStyle(
                           color: Color(0xFF09090B),
                           fontSize: 12,
