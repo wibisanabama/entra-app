@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -148,13 +149,13 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
             onDetect: _onDetect,
           ),
 
-          // Viewfinder Overlay Frame (Mobbin Rounded 28)
+          // Viewfinder Rounded Corner Brackets
           Center(
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                border: Border.all(
+            child: SizedBox(
+              width: 260,
+              height: 260,
+              child: CustomPaint(
+                painter: _ScannerCornerPainter(
                   color: _rapidResult != null
                       ? (_rapidResult!.status == ScanStatus.success
                           ? const Color(0xFF10B981)
@@ -162,9 +163,10 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
                               ? const Color(0xFFF59E0B)
                               : const Color(0xFFEF4444))
                       : (_isProcessing ? const Color(0xFFF59E0B) : Colors.white),
-                  width: 3.5,
+                  strokeWidth: 5.0,
+                  cornerLength: 64.0,
+                  cornerRadius: 36.0,
                 ),
-                borderRadius: BorderRadius.circular(28),
               ),
             ),
           ),
@@ -258,5 +260,80 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
         ],
       ),
     );
+  }
+}
+
+class _ScannerCornerPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double cornerLength;
+  final double cornerRadius;
+
+  const _ScannerCornerPainter({
+    required this.color,
+    this.strokeWidth = 5.0,
+    this.cornerLength = 64.0,
+    this.cornerRadius = 36.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final w = size.width;
+    final h = size.height;
+    final r = cornerRadius;
+    final l = cornerLength;
+    final half = strokeWidth / 2;
+
+    final left = half;
+    final top = half;
+    final right = w - half;
+    final bottom = h - half;
+
+    // 1. Top-Left Corner
+    final pathTL = Path()
+      ..moveTo(left, top + l)
+      ..lineTo(left, top + r)
+      ..arcTo(Rect.fromLTWH(left, top, r * 2, r * 2), math.pi, math.pi / 2, false)
+      ..lineTo(left + l, top);
+    canvas.drawPath(pathTL, paint);
+
+    // 2. Top-Right Corner
+    final pathTR = Path()
+      ..moveTo(right - l, top)
+      ..lineTo(right - r, top)
+      ..arcTo(Rect.fromLTWH(right - r * 2, top, r * 2, r * 2), 3 * math.pi / 2, math.pi / 2, false)
+      ..lineTo(right, top + l);
+    canvas.drawPath(pathTR, paint);
+
+    // 3. Bottom-Right Corner
+    final pathBR = Path()
+      ..moveTo(right, bottom - l)
+      ..lineTo(right, bottom - r)
+      ..arcTo(Rect.fromLTWH(right - r * 2, bottom - r * 2, r * 2, r * 2), 0, math.pi / 2, false)
+      ..lineTo(right - l, bottom);
+    canvas.drawPath(pathBR, paint);
+
+    // 4. Bottom-Left Corner
+    final pathBL = Path()
+      ..moveTo(left + l, bottom)
+      ..lineTo(left + r, bottom)
+      ..arcTo(Rect.fromLTWH(left, bottom - r * 2, r * 2, r * 2), math.pi / 2, math.pi / 2, false)
+      ..lineTo(left, bottom - l);
+    canvas.drawPath(pathBL, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ScannerCornerPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.cornerLength != cornerLength ||
+        oldDelegate.cornerRadius != cornerRadius;
   }
 }
