@@ -722,76 +722,30 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
               ),
             ),
 
-          // Instruction Banner (Bottom - Mobbin Pill Badges)
+          // Bottom Actions (Input Kode Manual)
           Positioned(
             bottom: 30,
             left: 24,
             right: 24,
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.95),
-                    borderRadius: BorderRadius.circular(9999),
-                    border: Border.all(color: const Color(0xFFE4E4E7)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+            child: Center(
+              child: SizedBox(
+                height: 40,
+                child: ElevatedButton.icon(
+                  onPressed: _showManualInputDialog,
+                  icon: const Icon(Icons.keyboard_alt_outlined, color: Color(0xFF09090B), size: 16),
+                  label: const Text(
+                    'Input Kode Manual',
+                    style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold, fontSize: 12),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_isProcessing)
-                        const SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF09090B)),
-                        )
-                      else
-                        const Icon(
-                          Icons.center_focus_strong_rounded,
-                          color: Color(0xFF09090B),
-                          size: 16,
-                        ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _isProcessing
-                            ? 'Memverifikasi...'
-                            : 'Arahkan kamera ke QR Code tiket',
-                        style: const TextStyle(
-                          color: Color(0xFF09090B),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF09090B),
+                    elevation: 0,
+                    shape: const StadiumBorder(),
+                    side: const BorderSide(color: Color(0xFFE4E4E7)),
                   ),
                 ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 40,
-                  child: ElevatedButton.icon(
-                    onPressed: _showManualInputDialog,
-                    icon: const Icon(Icons.keyboard_alt_outlined, color: Color(0xFF09090B), size: 16),
-                    label: const Text(
-                      'Input Kode Manual',
-                      style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold, fontSize: 12),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF09090B),
-                      elevation: 0,
-                      shape: const StadiumBorder(),
-                      side: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
