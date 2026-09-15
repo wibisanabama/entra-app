@@ -6,6 +6,7 @@ import '../models/event.dart';
 import '../providers/auth_provider.dart';
 import '../providers/event_provider.dart';
 import '../widgets/event_card.dart';
+import '../widgets/user_avatar.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -78,6 +79,7 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final eventProvider = Provider.of<EventProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     final allEvents = eventProvider.events;
     final filteredEvents = _getFilteredEvents(allEvents);
 
@@ -89,12 +91,17 @@ class _EventsScreenState extends State<EventsScreen> with WidgetsBindingObserver
           style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.3),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline_rounded, color: Color(0xFF09090B), size: 22),
-            tooltip: 'Profil',
-            onPressed: () => context.push('/profile'),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: UserAvatar(
+                avatarUrl: authProvider.user?.avatarUrl,
+                name: authProvider.user?.name ?? '',
+                size: 34,
+                onTap: () => context.push('/profile'),
+              ),
+            ),
           ),
-          const SizedBox(width: 4),
         ],
       ),
       body: GestureDetector(

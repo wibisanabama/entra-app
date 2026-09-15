@@ -35,9 +35,11 @@ class ScanResultDialog extends StatelessWidget {
 
     return AlertDialog(
       backgroundColor: Colors.white,
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
       ),
       contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
       content: Column(

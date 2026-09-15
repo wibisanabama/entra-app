@@ -149,114 +149,187 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
             onDetect: _onDetect,
           ),
 
-          // Viewfinder Rounded Corner Brackets
+          // Viewfinder Rounded Corner Brackets & Inner Square Popup Card
           Center(
             child: SizedBox(
               width: 260,
               height: 260,
-              child: CustomPaint(
-                painter: _ScannerCornerPainter(
-                  color: _rapidResult != null
-                      ? (_rapidResult!.status == ScanStatus.success
-                          ? const Color(0xFF10B981)
-                          : _rapidResult!.status == ScanStatus.alreadyUsed
-                              ? const Color(0xFFF59E0B)
-                              : const Color(0xFFEF4444))
-                      : (_isProcessing ? const Color(0xFFF59E0B) : Colors.white),
-                  strokeWidth: 5.0,
-                  cornerLength: 64.0,
-                  cornerRadius: 36.0,
-                ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: _ScannerCornerPainter(
+                        color: _rapidResult != null
+                            ? (_rapidResult!.status == ScanStatus.success
+                                ? const Color(0xFF10B981)
+                                : _rapidResult!.status == ScanStatus.alreadyUsed
+                                    ? const Color(0xFFF59E0B)
+                                    : const Color(0xFFEF4444))
+                            : (_isProcessing ? const Color(0xFFF59E0B) : Colors.white),
+                        strokeWidth: 5.0,
+                        cornerLength: 64.0,
+                        cornerRadius: 36.0,
+                      ),
+                    ),
+                  ),
+
+                  // POP-UP BOX KOTAK DI DALAM AREA SCAN SISI 4
+                  if (rapid != null)
+                    Container(
+                      width: 236,
+                      height: 236,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 52,
+                            height: 52,
+                            decoration: BoxDecoration(
+                              color: rapid.status == ScanStatus.success
+                                  ? const Color(0xFFECFDF5)
+                                  : rapid.status == ScanStatus.alreadyUsed
+                                      ? const Color(0xFFFFFBEB)
+                                      : const Color(0xFFFEF2F2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              rapid.status == ScanStatus.success
+                                  ? Icons.check_circle_rounded
+                                  : rapid.status == ScanStatus.alreadyUsed
+                                      ? Icons.warning_amber_rounded
+                                      : Icons.cancel_rounded,
+                              color: rapid.status == ScanStatus.success
+                                  ? const Color(0xFF059669)
+                                  : rapid.status == ScanStatus.alreadyUsed
+                                      ? const Color(0xFFD97706)
+                                      : const Color(0xFFDC2626),
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            rapid.status == ScanStatus.success
+                                ? 'CHECK-IN BERHASIL'
+                                : rapid.status == ScanStatus.alreadyUsed
+                                    ? 'TIKET SUDAH DIGUNAKAN'
+                                    : 'TIKET TIDAK VALID',
+                            style: TextStyle(
+                              color: rapid.status == ScanStatus.success
+                                  ? const Color(0xFF059669)
+                                  : rapid.status == ScanStatus.alreadyUsed
+                                      ? const Color(0xFFD97706)
+                                      : const Color(0xFFDC2626),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.3,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 6),
+                          if (rapid.status == ScanStatus.success) ...[
+                            if (rapid.attendeeName != null) ...[
+                              Text(
+                                rapid.attendeeName!,
+                                style: const TextStyle(
+                                  color: Color(0xFF09090B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                            if (rapid.ticketTypeName != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                rapid.ticketTypeName!,
+                                style: const TextStyle(color: Color(0xFF71717A), fontSize: 11),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                            if (rapid.attendeeName == null && rapid.ticketTypeName == null) ...[
+                              Text(
+                                rapid.message,
+                                style: const TextStyle(color: Color(0xFF71717A), fontSize: 11),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ] else if (rapid.status == ScanStatus.alreadyUsed) ...[
+                            if (rapid.attendeeName != null) ...[
+                              Text(
+                                rapid.attendeeName!,
+                                style: const TextStyle(
+                                  color: Color(0xFF09090B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                rapid.ticketTypeName ?? 'Sudah Check-in',
+                                style: const TextStyle(color: Color(0xFF71717A), fontSize: 11),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ] else ...[
+                              Text(
+                                rapid.message,
+                                style: const TextStyle(color: Color(0xFF71717A), fontSize: 11),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ] else ...[
+                            Text(
+                              rapid.message,
+                              style: const TextStyle(color: Color(0xFF71717A), fontSize: 11, height: 1.3),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF4F4F5),
+                                borderRadius: BorderRadius.circular(9999),
+                              ),
+                              child: Text(
+                                rapid.ticketCode,
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  color: Color(0xFF71717A),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
-
-          // RAPID SCAN FLASH POPUP BANNER (Mobbin Floating White Card)
-          if (rapid != null)
-            Center(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 28),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFE4E4E7)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: rapid.status == ScanStatus.success
-                            ? const Color(0xFFECFDF5)
-                            : rapid.status == ScanStatus.alreadyUsed
-                                ? const Color(0xFFFFFBEB)
-                                : const Color(0xFFFEF2F2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        rapid.status == ScanStatus.success
-                            ? Icons.check_circle_rounded
-                            : rapid.status == ScanStatus.alreadyUsed
-                                ? Icons.warning_amber_rounded
-                                : Icons.cancel_rounded,
-                        color: rapid.status == ScanStatus.success
-                            ? const Color(0xFF059669)
-                            : rapid.status == ScanStatus.alreadyUsed
-                                ? const Color(0xFFD97706)
-                                : const Color(0xFFDC2626),
-                        size: 36,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      rapid.status == ScanStatus.success
-                          ? 'CHECK-IN BERHASIL'
-                          : rapid.status == ScanStatus.alreadyUsed
-                              ? 'TIKET SUDAH DIGUNAKAN'
-                              : 'TIKET TIDAK VALID',
-                      style: TextStyle(
-                        color: rapid.status == ScanStatus.success
-                            ? const Color(0xFF059669)
-                            : rapid.status == ScanStatus.alreadyUsed
-                                ? const Color(0xFFD97706)
-                                : const Color(0xFFDC2626),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    if (rapid.attendeeName != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        rapid.attendeeName!,
-                        style: const TextStyle(
-                          color: Color(0xFF09090B),
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                    if (rapid.ticketTypeName != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        rapid.ticketTypeName!,
-                        style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
         ],
       ),
     );

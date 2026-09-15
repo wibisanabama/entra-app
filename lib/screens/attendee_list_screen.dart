@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../models/attendee.dart';
@@ -20,21 +19,39 @@ class AttendeeListScreen extends StatefulWidget {
   State<AttendeeListScreen> createState() => _AttendeeListScreenState();
 }
 
-class _AttendeeListScreenState extends State<AttendeeListScreen> {
+class _AttendeeListScreenState extends State<AttendeeListScreen> with WidgetsBindingObserver {
   final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
   String? _processingTicketCode;
+  double _previousBottomInset = 0.0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
   }
 
   @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    if (!mounted) return;
+    final bottomInset = View.of(context).viewInsets.bottom;
+    if (_previousBottomInset > 0 && bottomInset == 0) {
+      if (_searchFocusNode.hasFocus) {
+        _searchFocusNode.unfocus();
+      }
+    }
+    _previousBottomInset = bottomInset;
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -63,9 +80,9 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: Color(0xFFE4E4E7)),
         ),
         title: const Row(
           children: [
@@ -96,7 +113,6 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF4F4F5),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: Text(
                 'Kode: ${attendee.ticketCode}',
@@ -200,42 +216,6 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
     }
   }
 
-  void _exportManifestSummary(AttendeeProvider attendeeProvider) {
-    HapticFeedback.mediumImpact();
-    final total = attendeeProvider.totalCount;
-    final checkedIn = attendeeProvider.checkedInCount;
-    final unchecked = attendeeProvider.uncheckedCount;
-    final rate = total > 0 ? (checkedIn / total * 100).toStringAsFixed(1) : '0.0';
-
-    final buffer = StringBuffer();
-    buffer.writeln('=== MANIFEST KEHADIRAN EVENT ENTRA ===');
-    buffer.writeln('Event ID: ${widget.eventId}');
-    buffer.writeln('Total Peserta Terdaftar: $total');
-    buffer.writeln('Sudah Masuk Gate: $checkedIn ($rate%)');
-    buffer.writeln('Belum Masuk: $unchecked');
-    buffer.writeln('Waktu Laporan: ${DateTime.now().toLocal()}');
-    buffer.writeln('======================================');
-
-    Clipboard.setData(ClipboardData(text: buffer.toString()));
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: Color(0xFF09090B),
-        content: Row(
-          children: [
-            Icon(Icons.copy_all_rounded, color: Colors.white),
-            SizedBox(width: 8),
-            Text(
-              'Ringkasan manifest berhasil disalin ke clipboard!',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final attendeeProvider = Provider.of<AttendeeProvider>(context);
@@ -261,257 +241,270 @@ class _AttendeeListScreenState extends State<AttendeeListScreen> {
           ),
         ),
         iconTheme: const IconThemeData(color: Color(0xFF09090B)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share_rounded, color: Color(0xFF09090B)),
-            tooltip: 'Salin Ringkasan Manifest',
-            onPressed: () => _exportManifestSummary(attendeeProvider),
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Color(0xFF09090B)),
-            tooltip: 'Refresh Peserta',
-            onPressed: _loadData,
-          ),
-        ],
       ),
-      body: Column(
-        children: [
-          // Search & Filter Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _searchController,
-                  onChanged: (val) {
-                    attendeeProvider.setSearchQuery(val);
-                  },
-                  style: const TextStyle(
-                    color: Color(0xFF09090B),
-                    fontWeight: FontWeight.w600,
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (_searchFocusNode.hasFocus) {
+            _searchFocusNode.unfocus();
+          }
+        },
+        child: Column(
+          children: [
+            // Search & Filter Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _searchController,
+                    focusNode: _searchFocusNode,
+                    onTapOutside: (_) {
+                      _searchFocusNode.unfocus();
+                    },
+                    onSubmitted: (_) {
+                      _searchFocusNode.unfocus();
+                    },
+                    onChanged: (val) {
+                      attendeeProvider.setSearchQuery(val);
+                    },
+                    style: const TextStyle(
+                      color: Color(0xFF09090B),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Cari nama, email, atau kode tiket...',
+                      hintStyle: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 13),
+                      prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF71717A), size: 20),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear_rounded, size: 18, color: Color(0xFF71717A)),
+                              onPressed: () {
+                                _searchController.clear();
+                                attendeeProvider.setSearchQuery('');
+                                _searchFocusNode.unfocus();
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: const Color(0xFFF4F4F5),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(9999),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(9999),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(9999),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'Cari nama, email, atau kode tiket...',
-                    hintStyle: const TextStyle(color: Color(0xFFA1A1AA), fontSize: 13),
-                    prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF71717A), size: 20),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear_rounded, size: 18, color: Color(0xFF71717A)),
-                            onPressed: () {
-                              _searchController.clear();
-                              attendeeProvider.setSearchQuery('');
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: const Color(0xFFF4F4F5),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                
-                // Interactive Attendance Filter Chips (Mobbin Pill Chips)
-                Row(
-                  children: [
-                    // Total Chip
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => attendeeProvider.setStatusFilter(AttendeeStatusFilter.all),
-                        borderRadius: BorderRadius.circular(9999),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: currentFilter == AttendeeStatusFilter.all
-                                ? const Color(0xFF09090B)
-                                : const Color(0xFFF4F4F5),
-                            borderRadius: BorderRadius.circular(9999),
-                            border: Border.all(
-                              color: currentFilter == AttendeeStatusFilter.all
-                                  ? Colors.transparent
-                                  : const Color(0xFFE4E4E7),
-                            ),
-                          ),
-                          child: Text(
-                            'Semua ($total)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: currentFilter == AttendeeStatusFilter.all
-                                  ? Colors.white
-                                  : const Color(0xFF71717A),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
+                  const SizedBox(height: 12),
+                  
+                  // Status Filter Segmented Control (matches search bar width with sliding highlight)
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final totalWidth = constraints.maxWidth;
+                      final innerWidth = totalWidth - 8; // accounts for 4px padding on each side
+                      final tabWidth = innerWidth / 3;
+                      final activeIndex = _getFilterIndex(currentFilter);
 
-                    // Hadir Chip
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => attendeeProvider.setStatusFilter(AttendeeStatusFilter.checkedIn),
-                        borderRadius: BorderRadius.circular(9999),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: currentFilter == AttendeeStatusFilter.checkedIn
-                                ? const Color(0xFF09090B)
-                                : const Color(0xFFF4F4F5),
-                            borderRadius: BorderRadius.circular(9999),
-                            border: Border.all(
-                              color: currentFilter == AttendeeStatusFilter.checkedIn
-                                  ? Colors.transparent
-                                  : const Color(0xFFE4E4E7),
-                            ),
-                          ),
-                          child: Text(
-                            'Hadir ($checkedIn)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: currentFilter == AttendeeStatusFilter.checkedIn
-                                  ? Colors.white
-                                  : const Color(0xFF059669),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
+                      return Container(
+                        width: double.infinity,
+                        height: 40,
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xCCE4E4E7),
+                          borderRadius: BorderRadius.circular(999),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-
-                    // Belum Hadir Chip
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => attendeeProvider.setStatusFilter(AttendeeStatusFilter.unchecked),
-                        borderRadius: BorderRadius.circular(9999),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: currentFilter == AttendeeStatusFilter.unchecked
-                                ? const Color(0xFF09090B)
-                                : const Color(0xFFF4F4F5),
-                            borderRadius: BorderRadius.circular(9999),
-                            border: Border.all(
-                              color: currentFilter == AttendeeStatusFilter.unchecked
-                                  ? Colors.transparent
-                                  : const Color(0xFFE4E4E7),
-                            ),
-                          ),
-                          child: Text(
-                            'Belum ($unchecked)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: currentFilter == AttendeeStatusFilter.unchecked
-                                  ? Colors.white
-                                  : const Color(0xFFD97706),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // List View Body
-          Expanded(
-            child: RefreshIndicator(
-              color: const Color(0xFF09090B),
-              onRefresh: _loadData,
-              child: attendeeProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator(color: Color(0xFF09090B)))
-                  : attendeeProvider.errorMessage != null
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.error_outline, size: 48, color: Color(0xFFEF4444)),
-                              const SizedBox(height: 12),
-                              Text(
-                                attendeeProvider.errorMessage!,
-                                style: const TextStyle(color: Color(0xFF09090B)),
-                              ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: _loadData,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF09090B),
-                                  foregroundColor: Colors.white,
-                                  shape: const StadiumBorder(),
+                        child: Stack(
+                          children: [
+                            // Sliding highlight pill
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 250),
+                              curve: const Cubic(0.16, 1.0, 0.3, 1.0),
+                              left: activeIndex * tabWidth,
+                              top: 0,
+                              bottom: 0,
+                              width: tabWidth,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(999),
                                 ),
-                                child: const Text('Coba Lagi', style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
-                            ],
-                          ),
-                        )
-                      : attendees.isEmpty
-                          ? ListView(
+                            ),
+                            // Tab labels row
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const SizedBox(height: 80),
-                                const Icon(
-                                  Icons.person_search_rounded,
-                                  size: 64,
-                                  color: Color(0xFFD4D4D8),
+                                _buildSegmentTab(
+                                  label: 'Semua',
+                                  count: total,
+                                  filter: AttendeeStatusFilter.all,
+                                  currentFilter: currentFilter,
+                                  attendeeProvider: attendeeProvider,
                                 ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  attendeeProvider.searchQuery.isNotEmpty
-                                      ? 'Tidak ada peserta yang cocok'
-                                      : 'Belum Ada Peserta Terdaftar',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: Color(0xFF09090B),
-                                  ),
+                                _buildSegmentTab(
+                                  label: 'Hadir',
+                                  count: checkedIn,
+                                  filter: AttendeeStatusFilter.checkedIn,
+                                  currentFilter: currentFilter,
+                                  attendeeProvider: attendeeProvider,
                                 ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  'Peserta yang membeli tiket akan otomatis tercatat di sini.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xFF71717A),
-                                    fontSize: 13,
-                                  ),
+                                _buildSegmentTab(
+                                  label: 'Belum',
+                                  count: unchecked,
+                                  filter: AttendeeStatusFilter.unchecked,
+                                  currentFilter: currentFilter,
+                                  attendeeProvider: attendeeProvider,
                                 ),
                               ],
-                            )
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              itemCount: attendees.length,
-                              itemBuilder: (context, index) {
-                                final attendee = attendees[index];
-                                return AttendeeTile(
-                                  attendee: attendee,
-                                  isProcessing: _processingTicketCode == attendee.ticketCode,
-                                  onCheckIn: () => _performManualCheckIn(attendee),
-                                );
-                              },
                             ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            // List View Body
+            Expanded(
+              child: RefreshIndicator(
+                color: const Color(0xFF09090B),
+                onRefresh: _loadData,
+                child: attendeeProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator(color: Color(0xFF09090B)))
+                    : attendeeProvider.errorMessage != null
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.error_outline, size: 48, color: Color(0xFFEF4444)),
+                                const SizedBox(height: 12),
+                                Text(
+                                  attendeeProvider.errorMessage!,
+                                  style: const TextStyle(color: Color(0xFF09090B)),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _loadData,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF09090B),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  child: const Text('Coba Lagi', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                          )
+                        : attendees.isEmpty
+                            ? ListView(
+                                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                                children: [
+                                  const SizedBox(height: 80),
+                                  const Icon(
+                                    Icons.person_search_rounded,
+                                    size: 64,
+                                    color: Color(0xFFD4D4D8),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    attendeeProvider.searchQuery.isNotEmpty
+                                        ? 'Tidak ada peserta yang cocok'
+                                        : 'Belum Ada Peserta Terdaftar',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Color(0xFF09090B),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    'Peserta yang membeli tiket akan otomatis tercatat di sini.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Color(0xFF71717A),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ListView.builder(
+                                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: attendees.length,
+                                itemBuilder: (context, index) {
+                                  final attendee = attendees[index];
+                                  return AttendeeTile(
+                                    attendee: attendee,
+                                    isProcessing: _processingTicketCode == attendee.ticketCode,
+                                    onCheckIn: () => _performManualCheckIn(attendee),
+                                  );
+                                },
+                              ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  int _getFilterIndex(AttendeeStatusFilter filter) {
+    switch (filter) {
+      case AttendeeStatusFilter.checkedIn:
+        return 1;
+      case AttendeeStatusFilter.unchecked:
+        return 2;
+      case AttendeeStatusFilter.all:
+        return 0;
+    }
+  }
+
+  Widget _buildSegmentTab({
+    required String label,
+    required int count,
+    required AttendeeStatusFilter filter,
+    required AttendeeStatusFilter currentFilter,
+    required AttendeeProvider attendeeProvider,
+  }) {
+    final isSelected = currentFilter == filter;
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (_searchFocusNode.hasFocus) _searchFocusNode.unfocus();
+          if (currentFilter != filter) {
+            attendeeProvider.setStatusFilter(filter);
+          }
+        },
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: TextStyle(
+              color: isSelected ? const Color(0xFF09090B) : const Color(0xFF71717A),
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              letterSpacing: -0.2,
+            ),
+            child: Text(
+              '$label ($count)',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
           ),
-        ],
+        ),
       ),
     );
   }

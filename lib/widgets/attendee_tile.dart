@@ -60,9 +60,6 @@ class AttendeeTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isCheckedIn ? const Color(0xFFECFDF5) : const Color(0xFFFFFBEB),
                       borderRadius: BorderRadius.circular(9999),
-                      border: Border.all(
-                        color: isCheckedIn ? const Color(0xFFA7F3D0) : const Color(0xFFFDE68A),
-                      ),
                     ),
                     child: Text(
                       isCheckedIn ? 'Hadir (Checked In)' : 'Belum Hadir',
@@ -86,7 +83,7 @@ class AttendeeTile extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: 16),
-              const Divider(color: Color(0xFFE4E4E7), height: 1),
+              const Divider(color: Color(0xFFF4F4F5), height: 1),
               const SizedBox(height: 16),
               
               // Ticket Code Box
@@ -95,7 +92,6 @@ class AttendeeTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFF4F4F5),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE4E4E7)),
                 ),
                 child: Row(
                   children: [
@@ -173,11 +169,12 @@ class AttendeeTile extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 48,
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                     onPressed: () => Navigator.pop(ctx),
-                    style: OutlinedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFF4F4F5),
                       foregroundColor: const Color(0xFF09090B),
-                      side: const BorderSide(color: Color(0xFFE4E4E7)),
+                      elevation: 0,
                       shape: const StadiumBorder(),
                     ),
                     child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -199,29 +196,24 @@ class AttendeeTile extends StatelessWidget {
         ? attendee.userName[0].toUpperCase()
         : 'P';
 
-    return InkWell(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => _showAttendeeDetails(context),
-      borderRadius: BorderRadius.circular(20),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFF4F4F5),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0xFFE4E4E7),
-            width: 1,
-          ),
         ),
         child: Row(
           children: [
             Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFF4F4F5),
-                border: Border.all(color: const Color(0xFFE4E4E7)),
+                color: Colors.white,
               ),
               child: Center(
                 child: Text(
@@ -278,7 +270,6 @@ class AttendeeTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFECFDF5),
                   borderRadius: BorderRadius.circular(9999),
-                  border: Border.all(color: const Color(0xFFA7F3D0)),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
