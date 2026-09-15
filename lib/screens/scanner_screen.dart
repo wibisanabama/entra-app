@@ -113,98 +113,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
     });
   }
 
-  void _showManualInputDialog() {
-    final textController = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
-          top: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE4E4E7),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Input Kode Tiket Manual',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF09090B)),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Gunakan jika kamera mengalami kesulitan membaca QR code.',
-              style: TextStyle(fontSize: 13, color: Color(0xFF71717A)),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: textController,
-              autofocus: true,
-              style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.w600),
-              decoration: InputDecoration(
-                hintText: 'Masukkan Kode Tiket / UUID',
-                hintStyle: const TextStyle(color: Color(0xFFA1A1AA)),
-                filled: true,
-                fillColor: const Color(0xFFF4F4F5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  final raw = textController.text.trim();
-                  final code = QrNormalizer.normalize(raw);
-                  if (code.isNotEmpty) {
-                    Navigator.pop(ctx);
-                    _processTicketScan(code);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF09090B),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: const StadiumBorder(),
-                ),
-                child: const Text('Verifikasi Check-in', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final rapid = _rapidResult;
@@ -347,33 +255,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
                 ),
               ),
             ),
-
-          // Bottom Actions (Input Kode Manual)
-          Positioned(
-            bottom: 30,
-            left: 24,
-            right: 24,
-            child: Center(
-              child: SizedBox(
-                height: 40,
-                child: ElevatedButton.icon(
-                  onPressed: _showManualInputDialog,
-                  icon: const Icon(Icons.keyboard_alt_outlined, color: Color(0xFF09090B), size: 16),
-                  label: const Text(
-                    'Input Kode Manual',
-                    style: TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF09090B),
-                    elevation: 0,
-                    shape: const StadiumBorder(),
-                    side: const BorderSide(color: Color(0xFFE4E4E7)),
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
