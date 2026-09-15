@@ -92,10 +92,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
     }
   }
 
-  void _switchCamera() async {
-    await _controller.switchCamera();
-  }
-
   void _onDetect(BarcodeCapture capture) async {
     if (_isProcessing) return;
 
@@ -471,11 +467,6 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
             onPressed: _showRecentScansBottomSheet,
             icon: const Icon(Icons.history_rounded, color: Colors.white),
             tooltip: 'Riwayat Scan',
-          ),
-          IconButton(
-            onPressed: _switchCamera,
-            icon: const Icon(Icons.flip_camera_ios_rounded, color: Colors.white),
-            tooltip: 'Ganti Kamera',
           ),
         ],
       ),
