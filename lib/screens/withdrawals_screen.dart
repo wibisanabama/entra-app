@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../models/withdrawal.dart';
 import '../providers/auth_provider.dart';
 import '../providers/withdrawal_provider.dart';
-import '../widgets/withdrawal_bottom_sheet.dart';
+import '../widgets/user_avatar.dart';
 
 class WithdrawalsScreen extends StatefulWidget {
   const WithdrawalsScreen({super.key});
@@ -16,11 +17,10 @@ class WithdrawalsScreen extends StatefulWidget {
 }
 
 class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
-  String _statusFilter = 'ALL';
-
   @override
   void initState() {
     super.initState();
+    initializeDateFormatting('id_ID', null);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
     });
@@ -41,44 +41,46 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
   }
 
   String _formatDate(DateTime dt) {
-    return DateFormat('d MMM yyyy, HH:mm', 'id_ID').format(dt);
+    try {
+      return DateFormat('d MMM yyyy, HH:mm', 'id_ID').format(dt);
+    } catch (_) {
+      try {
+        return DateFormat('d MMM yyyy, HH:mm').format(dt);
+      } catch (_) {
+        return '${dt.day}/${dt.month}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      }
+    }
   }
 
   Widget _buildStatusBadge(String status) {
     Color bg;
     Color text;
-    Color border;
     String label;
 
     switch (status.toUpperCase()) {
       case 'PENDING':
         bg = const Color(0xFFFFFBEB);
         text = const Color(0xFFD97706);
-        border = const Color(0xFFFDE68A);
         label = 'Menunggu';
         break;
       case 'APPROVED':
         bg = const Color(0xFFEFF6FF);
         text = const Color(0xFF2563EB);
-        border = const Color(0xFFBFDBFE);
         label = 'Disetujui';
         break;
       case 'PAID':
         bg = const Color(0xFFECFDF5);
         text = const Color(0xFF059669);
-        border = const Color(0xFFA7F3D0);
         label = 'Selesai';
         break;
       case 'REJECTED':
         bg = const Color(0xFFFEF2F2);
         text = const Color(0xFFDC2626);
-        border = const Color(0xFFFECACA);
         label = 'Ditolak';
         break;
       default:
         bg = const Color(0xFFF4F4F5);
         text = const Color(0xFF71717A);
-        border = const Color(0xFFE4E4E7);
         label = status;
     }
 
@@ -87,7 +89,6 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(9999),
-        border: Border.all(color: border),
       ),
       child: Text(
         label,
@@ -107,7 +108,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: Color(0xFFE4E4E7)),
+          side: BorderSide.none,
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,7 +137,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                 ),
               ),
             ),
-            const Divider(color: Color(0xFFE4E4E7), height: 24),
+            const Divider(color: Color(0xFFF4F4F5), height: 24),
             _buildDetailRow('Bank Tujuan', w.bankName),
             _buildDetailRow('Nomor Rekening', w.accountNumber),
             _buildDetailRow('Nama Penerima', w.accountName),
@@ -150,7 +151,6 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFFECACA)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,13 +212,11 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
   @override
   Widget build(BuildContext context) {
     final withdrawalProvider = Provider.of<WithdrawalProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     final balance = withdrawalProvider.balance;
     final withdrawals = withdrawalProvider.withdrawals;
 
-    final filteredWithdrawals = withdrawals.where((w) {
-      if (_statusFilter == 'ALL') return true;
-      return w.status.toUpperCase() == _statusFilter;
-    }).toList();
+    final filteredWithdrawals = withdrawals;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -236,17 +234,17 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
         ),
         iconTheme: const IconThemeData(color: Color(0xFF09090B)),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Color(0xFF09090B)),
-            tooltip: 'Refresh',
-            onPressed: _loadData,
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: UserAvatar(
+                avatarUrl: authProvider.user?.avatarUrl,
+                name: authProvider.user?.name ?? '',
+                size: 34,
+                onTap: () => context.push('/profile'),
+              ),
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.person_outline_rounded, color: Color(0xFF09090B), size: 22),
-            tooltip: 'Profil',
-            onPressed: () => context.push('/profile'),
-          ),
-          const SizedBox(width: 4),
         ],
       ),
       body: RefreshIndicator(
@@ -334,10 +332,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                         ),
                         onPressed: balance.availableBalance >= 10000
                             ? () async {
-                                final res = await WithdrawalBottomSheet.show(
-                                  context,
-                                  balance.availableBalance,
-                                );
+                                final res = await context.push<bool>('/withdrawals/request');
                                 if (res == true) {
                                   _loadData();
                                 }
@@ -350,16 +345,15 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // 3 Metric Sub-Cards (Mobbin Clean White Cards)
+              // 3 Metric Sub-Cards (Mobbin Clean Surface Cards)
               Row(
                 children: [
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,9 +375,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -405,9 +398,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE4E4E7)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,22 +429,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                   color: Color(0xFF09090B),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              // Filter Chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _buildFilterChip('ALL', 'Semua'),
-                    _buildFilterChip('PENDING', 'Menunggu'),
-                    _buildFilterChip('APPROVED', 'Disetujui'),
-                    _buildFilterChip('PAID', 'Selesai'),
-                    _buildFilterChip('REJECTED', 'Ditolak'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
 
               // Withdrawals List
               if (withdrawalProvider.isLoading)
@@ -465,9 +443,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: const Color(0xFFF4F4F5),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFE4E4E7)),
                   ),
                   child: const Column(
                     children: [
@@ -494,22 +471,21 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                   separatorBuilder: (ctx, idx) => const SizedBox(height: 8),
                   itemBuilder: (ctx, idx) {
                     final w = filteredWithdrawals[idx];
-                    return InkWell(
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => _showDetailDialog(w),
-                      borderRadius: BorderRadius.circular(18),
                       child: Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: const Color(0xFFF4F4F5),
                           borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: const Color(0xFFE4E4E7)),
                         ),
                         child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF4F4F5),
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -561,37 +537,4 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
     );
   }
 
-  Widget _buildFilterChip(String value, String label) {
-    final isSelected = _statusFilter == value;
-    return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: FilterChip(
-        label: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: isSelected ? Colors.white : const Color(0xFF71717A),
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        selected: isSelected,
-        backgroundColor: const Color(0xFFF4F4F5),
-        selectedColor: const Color(0xFF09090B),
-        checkmarkColor: Colors.white,
-        showCheckmark: false,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(9999),
-          side: BorderSide(
-            color: isSelected ? Colors.transparent : const Color(0xFFE4E4E7),
-          ),
-        ),
-        onSelected: (selected) {
-          setState(() {
-            _statusFilter = value;
-          });
-        },
-      ),
-    );
-  }
 }

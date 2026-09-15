@@ -70,14 +70,6 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
     return formatter.format(amount);
   }
 
-  void _setAmountPercentage(double percentage) {
-    final amount = (widget.availableBalance * percentage).floorToDouble();
-    _amountController.text = amount.toStringAsFixed(0);
-  }
-
-  void _setFixedAmount(double amount) {
-    _amountController.text = amount.toStringAsFixed(0);
-  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -169,7 +161,6 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF4F4F5),
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,7 +193,6 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(9999),
-                      border: Border.all(color: const Color(0xFFE4E4E7)),
                     ),
                     child: const Text(
                       'Min. Rp 10rb',
@@ -233,15 +223,15 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 fillColor: const Color(0xFFF4F4F5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                  borderSide: BorderSide.none,
                 ),
               ),
               validator: (val) {
@@ -258,71 +248,8 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 return null;
               },
             ),
-            const SizedBox(height: 10),
-
-            // Quick Chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  ActionChip(
-                    label: const Text('25%', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                    backgroundColor: const Color(0xFFF4F4F5),
-                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      side: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                    onPressed: () => _setAmountPercentage(0.25),
-                  ),
-                  const SizedBox(width: 6),
-                  ActionChip(
-                    label: const Text('50%', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                    backgroundColor: const Color(0xFFF4F4F5),
-                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      side: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                    onPressed: () => _setAmountPercentage(0.50),
-                  ),
-                  const SizedBox(width: 6),
-                  ActionChip(
-                    label: const Text('Tarik Semua (100%)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                    backgroundColor: const Color(0xFF09090B),
-                    labelStyle: const TextStyle(color: Colors.white),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      side: BorderSide.none,
-                    ),
-                    onPressed: () => _setAmountPercentage(1.0),
-                  ),
-                  const SizedBox(width: 6),
-                  ActionChip(
-                    label: const Text('100rb', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                    backgroundColor: const Color(0xFFF4F4F5),
-                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      side: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                    onPressed: () => _setFixedAmount(100000),
-                  ),
-                  const SizedBox(width: 6),
-                  ActionChip(
-                    label: const Text('500rb', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                    backgroundColor: const Color(0xFFF4F4F5),
-                    labelStyle: const TextStyle(color: Color(0xFF09090B)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(9999),
-                      side: const BorderSide(color: Color(0xFFE4E4E7)),
-                    ),
-                    onPressed: () => _setFixedAmount(500000),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 18),
+
 
             // Bank Selection Dropdown
             const Text(
@@ -335,7 +262,6 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF4F4F5),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -376,15 +302,15 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 fillColor: const Color(0xFFF4F4F5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                  borderSide: BorderSide.none,
                 ),
               ),
               validator: (val) {
@@ -412,15 +338,15 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 fillColor: const Color(0xFFF4F4F5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                  borderSide: BorderSide.none,
                 ),
               ),
               validator: (val) {
@@ -448,15 +374,15 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
                 fillColor: const Color(0xFFF4F4F5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                  borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFF09090B), width: 1.5),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
@@ -468,7 +394,6 @@ class _WithdrawalBottomSheetState extends State<WithdrawalBottomSheet> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF4F4F5),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

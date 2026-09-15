@@ -9,6 +9,7 @@ import 'screens/event_detail_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/request_withdrawal_screen.dart';
 import 'screens/scanner_screen.dart';
 import 'screens/withdrawals_screen.dart';
 import 'widgets/organizer_shell.dart';
@@ -78,6 +79,10 @@ GoRouter createRouterWithAuth(AuthProvider authProvider) {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/withdrawals/request',
+        builder: (context, state) => const RequestWithdrawalScreen(),
       ),
       GoRoute(
         path: '/events/:id',
