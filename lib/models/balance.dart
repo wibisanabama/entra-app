@@ -1,4 +1,8 @@
 class OrganizerBalance {
+  final double grossRevenue;
+  final double platformFeePercent;
+  final double platformFeeAmount;
+  final double netRevenue;
   final double totalRevenue;
   final double totalWithdrawn;
   final double availableBalance;
@@ -7,6 +11,10 @@ class OrganizerBalance {
   final int totalRequests;
 
   OrganizerBalance({
+    this.grossRevenue = 0.0,
+    this.platformFeePercent = 5.0,
+    this.platformFeeAmount = 0.0,
+    this.netRevenue = 0.0,
     required this.totalRevenue,
     required this.totalWithdrawn,
     required this.availableBalance,
@@ -31,8 +39,20 @@ class OrganizerBalance {
       return 0;
     }
 
+    final gross = parseDouble(json['gross_revenue']);
+    final feePercent = json['platform_fee_percent'] != null
+        ? parseDouble(json['platform_fee_percent'])
+        : 5.0;
+    final feeAmount = parseDouble(json['platform_fee_amount']);
+    final net = parseDouble(json['net_revenue']);
+    final totalRev = parseDouble(json['total_revenue']);
+
     return OrganizerBalance(
-      totalRevenue: parseDouble(json['total_revenue']),
+      grossRevenue: gross > 0 ? gross : (net > 0 ? net : totalRev),
+      platformFeePercent: feePercent > 0 ? feePercent : 5.0,
+      platformFeeAmount: feeAmount,
+      netRevenue: net > 0 ? net : totalRev,
+      totalRevenue: totalRev,
       totalWithdrawn: parseDouble(json['total_withdrawn']),
       availableBalance: parseDouble(json['available_balance']),
       pendingAmount: parseDouble(json['pending_amount']),
@@ -43,6 +63,10 @@ class OrganizerBalance {
 
   factory OrganizerBalance.empty() {
     return OrganizerBalance(
+      grossRevenue: 0.0,
+      platformFeePercent: 5.0,
+      platformFeeAmount: 0.0,
+      netRevenue: 0.0,
       totalRevenue: 0.0,
       totalWithdrawn: 0.0,
       availableBalance: 0.0,

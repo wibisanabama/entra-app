@@ -135,8 +135,34 @@ void main() {
       expect(balance.totalRequests, equals(0));
     });
 
+    test('fromJson parses platform fee and revenue sharing fields correctly', () {
+      final json = {
+        'gross_revenue': 1000000.0,
+        'platform_fee_percent': 5.0,
+        'platform_fee_amount': 50000.0,
+        'net_revenue': 950000.0,
+        'total_revenue': 950000.0,
+        'total_withdrawn': 200000.0,
+        'available_balance': 750000.0,
+        'pending_amount': 0.0,
+        'paid_amount': 200000.0,
+        'total_requests': 1,
+      };
+
+      final balance = OrganizerBalance.fromJson(json);
+      expect(balance.grossRevenue, equals(1000000.0));
+      expect(balance.platformFeePercent, equals(5.0));
+      expect(balance.platformFeeAmount, equals(50000.0));
+      expect(balance.netRevenue, equals(950000.0));
+      expect(balance.availableBalance, equals(750000.0));
+    });
+
     test('empty factory creates initial zero state', () {
       final empty = OrganizerBalance.empty();
+      expect(empty.grossRevenue, equals(0.0));
+      expect(empty.platformFeePercent, equals(5.0));
+      expect(empty.platformFeeAmount, equals(0.0));
+      expect(empty.netRevenue, equals(0.0));
       expect(empty.totalRevenue, equals(0.0));
       expect(empty.totalWithdrawn, equals(0.0));
       expect(empty.availableBalance, equals(0.0));

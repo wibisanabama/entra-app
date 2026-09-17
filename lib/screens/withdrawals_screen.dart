@@ -345,7 +345,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // 3 Metric Sub-Cards (Mobbin Clean Surface Cards)
+              // 3 Metric Revenue Breakdown Sub-Cards (Mobbin Clean Surface Cards)
               Row(
                 children: [
                   Expanded(
@@ -358,10 +358,10 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Total Omset', style: TextStyle(color: Color(0xFF71717A), fontSize: 11)),
+                          const Text('Kotor', style: TextStyle(color: Color(0xFF71717A), fontSize: 11)),
                           const SizedBox(height: 4),
                           Text(
-                            _formatCurrency(balance.totalRevenue),
+                            _formatCurrency(balance.grossRevenue > 0 ? balance.grossRevenue : balance.totalRevenue),
                             style: const TextStyle(color: Color(0xFF09090B), fontWeight: FontWeight.bold, fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -381,11 +381,26 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Pending', style: TextStyle(color: Color(0xFFD97706), fontSize: 11)),
+                          Row(
+                            children: [
+                              const Text('Fee ', style: TextStyle(color: Color(0xFF71717A), fontSize: 11)),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE4E4E7),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  '${balance.platformFeePercent.toStringAsFixed(0)}%',
+                                  style: const TextStyle(color: Color(0xFF52525B), fontSize: 9, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 4),
                           Text(
-                            _formatCurrency(balance.pendingAmount),
-                            style: const TextStyle(color: Color(0xFFD97706), fontWeight: FontWeight.bold, fontSize: 12),
+                            '-${_formatCurrency(balance.platformFeeAmount)}',
+                            style: const TextStyle(color: Color(0xFF71717A), fontWeight: FontWeight.bold, fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -404,13 +419,79 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Sudah Cair', style: TextStyle(color: Color(0xFF059669), fontSize: 11)),
+                          const Text('Bersih', style: TextStyle(color: Color(0xFF059669), fontSize: 11, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Text(
-                            _formatCurrency(balance.paidAmount),
+                            _formatCurrency(balance.netRevenue > 0 ? balance.netRevenue : balance.totalRevenue),
                             style: const TextStyle(color: Color(0xFF059669), fontWeight: FontWeight.bold, fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Payout Status Sub-Cards
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F4F5),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.access_time_rounded, color: Color(0xFFD97706), size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Diproses', style: TextStyle(color: Color(0xFF71717A), fontSize: 10)),
+                                Text(
+                                  _formatCurrency(balance.pendingAmount),
+                                  style: const TextStyle(color: Color(0xFFD97706), fontWeight: FontWeight.bold, fontSize: 12),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F4F5),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF059669), size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Dicairkan', style: TextStyle(color: Color(0xFF71717A), fontSize: 10)),
+                                Text(
+                                  _formatCurrency(balance.paidAmount),
+                                  style: const TextStyle(color: Color(0xFF059669), fontWeight: FontWeight.bold, fontSize: 12),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
