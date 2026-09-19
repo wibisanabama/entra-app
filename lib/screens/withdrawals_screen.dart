@@ -590,8 +590,22 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    '${w.bankName} • ${w.accountNumber}',
-                                    style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
+                                    w.bankName,
+                                    style: const TextStyle(
+                                      color: Color(0xFF71717A),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    w.accountNumber,
+                                    style: const TextStyle(
+                                      color: Color(0xFF71717A),
+                                      fontSize: 12,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
