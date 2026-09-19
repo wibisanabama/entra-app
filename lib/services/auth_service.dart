@@ -233,17 +233,21 @@ class AuthService {
       }
 
       final url = Uri.parse('${ApiConfig.authBaseUrl}/api/v1/auth/profile');
+      final payload = <String, dynamic>{
+        'full_name': fullName,
+        'phone': phone ?? '',
+      };
+      if (avatarUrl != null) {
+        payload['avatar_url'] = avatarUrl;
+      }
+
       final response = await http.put(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'full_name': fullName,
-          'phone': phone ?? '',
-          'avatar_url': avatarUrl ?? '',
-        }),
+        body: jsonEncode(payload),
       );
 
       if (response.statusCode == 401) {

@@ -150,6 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   final success = await authProvider.updateProfile(
                                     fullName: nameController.text.trim(),
                                     phone: phoneController.text.trim(),
+                                    avatarUrl: user.avatarUrl,
                                   );
                                   setModalState(() => isSaving = false);
 

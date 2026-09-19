@@ -128,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
     final result = await _authService.updateProfile(
       fullName: fullName,
       phone: phone,
-      avatarUrl: avatarUrl,
+      avatarUrl: avatarUrl ?? _user?.avatarUrl,
     );
 
     _isLoading = false;
