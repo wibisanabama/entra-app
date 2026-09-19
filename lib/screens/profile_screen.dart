@@ -370,34 +370,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'User ID:',
                           style: TextStyle(color: Color(0xFF71717A), fontSize: 12),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Clipboard.setData(ClipboardData(text: user.id));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('User ID disalin ke clipboard!'),
-                                backgroundColor: Color(0xFF09090B),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '${user.id.substring(0, 8)}...',
-                                  style: const TextStyle(
-                                    fontFamily: 'monospace',
-                                    color: Color(0xFF09090B),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: InkWell(
+                              onTap: () {
+                                Clipboard.setData(ClipboardData(text: user.id));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('User ID disalin ke clipboard!'),
+                                    backgroundColor: Color(0xFF09090B),
+                                    duration: Duration(seconds: 2),
                                   ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          user.id,
+                                          style: const TextStyle(
+                                            fontFamily: 'monospace',
+                                            color: Color(0xFF09090B),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF09090B)),
+                                  ],
                                 ),
-                                const SizedBox(width: 4),
-                                const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF09090B)),
-                              ],
+                              ),
                             ),
                           ),
                         ),
