@@ -434,11 +434,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 10),
 
               // Account Settings Tile Container
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F5),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              Material(
+                color: const Color(0xFFF4F4F5),
+                borderRadius: BorderRadius.circular(20),
+                clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
                     ListTile(
