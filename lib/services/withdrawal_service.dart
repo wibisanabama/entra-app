@@ -60,10 +60,14 @@ class WithdrawalService {
     String? notes,
   }) async {
     try {
+      final idempotencyKey = 'app-wdr-${DateTime.now().millisecondsSinceEpoch}-${amount.toInt()}';
       final url = Uri.parse('${ApiConfig.ticketBaseUrl}/api/v1/tickets/organizer/withdrawals');
       final response = await _apiClient.post(
         url,
         token: token,
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
         body: jsonEncode({
           'amount': amount,
           'bank_name': bankName,
