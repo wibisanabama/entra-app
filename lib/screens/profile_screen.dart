@@ -444,9 +444,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ListTile(
                       leading: const Icon(Icons.person_outline_rounded, color: Color(0xFF09090B)),
                       title: const Text('Informasi Profil', style: TextStyle(color: Color(0xFF09090B), fontSize: 14, fontWeight: FontWeight.w600)),
-                      subtitle: Text(
-                        'Nama: ${user.name} • Telp: ${user.phone ?? '-'}',
-                        style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Nama: ${user.name}',
+                              style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Telp: ${(user.phone != null && user.phone!.isNotEmpty) ? user.phone! : '-'}',
+                              style: const TextStyle(color: Color(0xFF71717A), fontSize: 12),
+                            ),
+                          ],
+                        ),
                       ),
                       trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFA1A1AA)),
                       onTap: () => _showEditProfileBottomSheet(context),
