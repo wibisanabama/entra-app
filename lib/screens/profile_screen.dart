@@ -451,13 +451,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : const Icon(Icons.send_rounded, color: Color(0xFF09090B), size: 18),
                       onTap: _isResettingPassword ? null : () => _handlePasswordReset(context),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFF09090B)),
-                      title: const Text('Manajemen Penarikan Dana', style: TextStyle(color: Color(0xFF09090B), fontSize: 14, fontWeight: FontWeight.w600)),
-                      subtitle: const Text('Tarik saldo pendapatan tiket ke rekening bank', style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFA1A1AA)),
-                      onTap: () => context.go('/withdrawals'),
-                    ),
                   ],
                 ),
               ),
