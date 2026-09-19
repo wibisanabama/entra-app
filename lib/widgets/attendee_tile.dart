@@ -251,7 +251,7 @@ class AttendeeTile extends StatelessWidget {
                   ],
                   const SizedBox(height: 4),
                   Text(
-                    'Kode: ${attendee.ticketCode.length > 16 ? '${attendee.ticketCode.substring(0, 16)}...' : attendee.ticketCode}',
+                    'Kode: ${attendee.ticketCode}',
                     style: const TextStyle(
                       color: Color(0xFFA1A1AA),
                       fontFamily: 'monospace',
