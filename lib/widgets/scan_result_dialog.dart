@@ -79,26 +79,27 @@ class ScanResultDialog extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4F4F5),
-              borderRadius: BorderRadius.circular(9999),
-              border: Border.all(color: const Color(0xFFE4E4E7)),
-            ),
-            child: Text(
-              result.ticketCode,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFF09090B),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+          if (result.ticketCode.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF4F4F5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE4E4E7)),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              child: Text(
+                result.ticketCode.split('').join('\u200B'),
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  color: Color(0xFF09090B),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
+          ],
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
