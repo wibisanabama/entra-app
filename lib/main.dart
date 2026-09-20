@@ -99,9 +99,13 @@ class _EntraAppState extends State<EntraApp> {
               color: Color(0xFF09090B),
             ),
           ),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
           cardTheme: CardThemeData(
             color: Colors.white,
             elevation: 0,
+            shadowColor: Colors.transparent,
             surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -113,6 +117,10 @@ class _EntraAppState extends State<EntraApp> {
               backgroundColor: const Color(0xFF09090B),
               foregroundColor: Colors.white,
               elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
+              enableFeedback: false,
               shape: const StadiumBorder(),
               textStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
@@ -124,6 +132,11 @@ class _EntraAppState extends State<EntraApp> {
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(
               foregroundColor: const Color(0xFF09090B),
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
+              enableFeedback: false,
               side: const BorderSide(color: Color(0xFFE4E4E7), width: 1),
               shape: const StadiumBorder(),
               textStyle: const TextStyle(
@@ -131,6 +144,24 @@ class _EntraAppState extends State<EntraApp> {
                 fontSize: 14,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
+              enableFeedback: false,
+            ),
+          ),
+          iconButtonTheme: IconButtonThemeData(
+            style: IconButton.styleFrom(
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
+              enableFeedback: false,
             ),
           ),
           inputDecorationTheme: InputDecorationTheme(

@@ -209,6 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         foregroundColor: Colors.white,
                         shape: const StadiumBorder(),
                         elevation: 0,
+                        shadowColor: Colors.transparent,
                       ),
                       child: authProvider.isLoading
                           ? const SizedBox(

@@ -178,6 +178,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                 backgroundColor: const Color(0xFF09090B),
                 foregroundColor: Colors.white,
                 elevation: 0,
+                shadowColor: Colors.transparent,
                 shape: const StadiumBorder(),
               ),
               child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -328,6 +329,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen> {
                           backgroundColor: Colors.white,
                           foregroundColor: const Color(0xFF09090B),
                           elevation: 0,
+                          shadowColor: Colors.transparent,
                           shape: const StadiumBorder(),
                         ),
                         onPressed: balance.availableBalance >= 10000

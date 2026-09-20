@@ -140,6 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: const Color(0xFF09090B),
                           foregroundColor: Colors.white,
                           elevation: 0,
+                          shadowColor: Colors.transparent,
                           shape: const StadiumBorder(),
                         ),
                         onPressed: isSaving
@@ -243,6 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundColor: const Color(0xFF09090B),
                     foregroundColor: Colors.white,
                     elevation: 0,
+                    shadowColor: Colors.transparent,
                     shape: const StadiumBorder(),
                   ),
                   child: const Text('Mengerti', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -531,6 +533,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               backgroundColor: const Color(0xFFEF4444),
                               foregroundColor: Colors.white,
                               elevation: 0,
+                              shadowColor: Colors.transparent,
                               shape: const StadiumBorder(),
                             ),
                             onPressed: () => Navigator.pop(ctx, true),

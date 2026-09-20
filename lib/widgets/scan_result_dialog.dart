@@ -112,6 +112,7 @@ class ScanResultDialog extends StatelessWidget {
                 backgroundColor: const Color(0xFF09090B),
                 foregroundColor: Colors.white,
                 elevation: 0,
+                shadowColor: Colors.transparent,
                 shape: const StadiumBorder(),
               ),
               child: const Text(
